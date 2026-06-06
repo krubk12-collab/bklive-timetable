@@ -510,14 +510,25 @@ function drawSupervision(){
   else wrap.innerHTML=drawSupByDate();
 }
 function drawSupSupervisee(need){
+  // map: teacher_id → คาบที่ครูคนนั้นต้อง "ไปนิเทศเพื่อน" (จาก bySupervisor)
+  const dutyMap={};(supData.bySupervisor||[]).forEach(s=>{dutyMap[s.supervisor_id]=s.observations||[];});
+  const nameCell=(t)=>{
+    const statusHtml=t.complete?`<span style="color:#16a34a;font-weight:700">ครบ ✓</span>`
+      :(t.total?`<span style="color:#dc2626;font-weight:700">${t.total}/${need}</span>`:`<span style="color:#dc2626;font-weight:700">ยังไม่ได้วางแผน</span>`);
+    const duties=(dutyMap[t.teacher_id]||[]).slice().sort((a,b)=>(a.date||'').localeCompare(b.date||'')||a.period-b.period);
+    const dutyHtml=duties.length
+      ? `<div class="ttch" style="margin-top:7px;color:#7c3aed;font-weight:700">🧑‍🏫 ต้องไปนิเทศเพื่อน ${duties.length} คาบ</div>`+
+        duties.map(o=>`<div class="ttch" style="color:#7c3aed">→ ${esc(o.supervisee_name)} · ${supFmtDate(o.date)} ค.${o.period}<span style="color:#94a3b8"> (${esc(o.class_name)})</span></div>`).join('')
+      : `<div class="ttch" style="margin-top:7px;color:#94a3b8">— ไม่ต้องไปนิเทศใคร —</div>`;
+    return `<b>${esc(t.name)}</b><div class="ttch">${statusHtml}</div>${dutyHtml}`;
+  };
   let h=`<table class="today-tbl"><thead><tr><th class="tbl-ph" style="text-align:left;padding-left:10px">ครูผู้รับนิเทศ</th><th class="tbl-ph">บทบาท</th><th class="tbl-ph">ผู้นิเทศ</th><th class="tbl-ph">วันที่</th><th class="tbl-ph">คาบ</th><th class="tbl-ph">ห้อง / วิชา</th></tr></thead><tbody>`;
   (supData.bySupervisee||[]).forEach(t=>{
     const picks=t.picks||[];
-    const status=t.complete?`<span style="color:#16a34a;font-weight:700">ครบ ✓</span>`:`<span style="color:#dc2626;font-weight:700">${t.total}/${need}</span>`;
-    if(!picks.length){h+=`<tr><td class="tbl-cell" style="padding-left:10px"><b>${esc(t.name)}</b><div class="ttch" style="color:#dc2626">ยังไม่ได้วางแผน</div></td><td class="tbl-cell" colspan="5" style="color:#cbd5e1">—</td></tr>`;return;}
+    if(!picks.length){h+=`<tr><td class="tbl-cell" style="padding-left:10px;vertical-align:top">${nameCell(t)}</td><td class="tbl-cell" colspan="5" style="color:#cbd5e1">— ยังไม่ได้เลือกผู้นิเทศตัวเอง —</td></tr>`;return;}
     picks.forEach((p,i)=>{
       h+=`<tr>`;
-      if(i===0)h+=`<td class="tbl-cell" rowspan="${picks.length}" style="vertical-align:top;padding-left:10px"><b>${esc(t.name)}</b><div class="ttch">${status}</div></td>`;
+      if(i===0)h+=`<td class="tbl-cell" rowspan="${picks.length}" style="vertical-align:top;padding-left:10px">${nameCell(t)}</td>`;
       h+=`<td class="tbl-cell">${roleTag(p.role)}</td><td class="tbl-cell">${esc(p.supervisor_name)}</td><td class="tbl-cell">${supFmtDate(p.date)}</td><td class="tbl-cell">คาบ ${p.period}</td><td class="tbl-cell"><div class="tsubj" style="background:#f1f5f9;color:#475569">${esc(p.subject_name)}</div><div class="ttch">${esc(p.class_name)}</div></td></tr>`;
     });
   });
