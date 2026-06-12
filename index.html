@@ -518,18 +518,18 @@ function drawSupSupervisee(need){
     const duties=(dutyMap[t.teacher_id]||[]).slice().sort((a,b)=>(a.date||'').localeCompare(b.date||'')||a.period-b.period);
     const dutyHtml=duties.length
       ? `<div class="ttch" style="margin-top:7px;color:#7c3aed;font-weight:700">🧑‍🏫 ต้องไปนิเทศเพื่อน ${duties.length} คาบ</div>`+
-        duties.map(o=>`<div class="ttch" style="color:#7c3aed">→ ${esc(o.supervisee_name)} · ${supFmtDate(o.date)} ค.${o.period}<span style="color:#94a3b8"> (${esc(o.class_name)})</span></div>`).join('')
+        duties.map(o=>`<div class="ttch" style="color:#7c3aed">→ ${esc(o.supervisee_name)} · ${supFmtDate(o.date)} ค.${o.period} ${PERIOD_TIME[o.period]||''}<span style="color:#94a3b8"> (${esc(o.class_name)})</span></div>`).join('')
       : `<div class="ttch" style="margin-top:7px;color:#94a3b8">— ไม่ต้องไปนิเทศใคร —</div>`;
     return `<b>${esc(t.name)}</b><div class="ttch">${statusHtml}</div>${dutyHtml}`;
   };
-  let h=`<table class="today-tbl"><thead><tr><th class="tbl-ph" style="text-align:left;padding-left:10px">ครูผู้รับนิเทศ</th><th class="tbl-ph">บทบาท</th><th class="tbl-ph">ผู้นิเทศ</th><th class="tbl-ph">วันที่</th><th class="tbl-ph">คาบ</th><th class="tbl-ph">ห้อง / วิชา</th></tr></thead><tbody>`;
+  let h=`<table class="today-tbl"><thead><tr><th class="tbl-ph" style="text-align:left;padding-left:10px">ครูผู้รับนิเทศ</th><th class="tbl-ph">บทบาท</th><th class="tbl-ph">ผู้นิเทศ</th><th class="tbl-ph">วันที่</th><th class="tbl-ph">คาบ</th><th class="tbl-ph">เวลา</th><th class="tbl-ph">ห้อง / วิชา</th></tr></thead><tbody>`;
   (supData.bySupervisee||[]).forEach(t=>{
     const picks=t.picks||[];
-    if(!picks.length){h+=`<tr><td class="tbl-cell" style="padding-left:10px;vertical-align:top">${nameCell(t)}</td><td class="tbl-cell" colspan="5" style="color:#cbd5e1">— ยังไม่ได้เลือกผู้นิเทศตัวเอง —</td></tr>`;return;}
+    if(!picks.length){h+=`<tr><td class="tbl-cell" style="padding-left:10px;vertical-align:top">${nameCell(t)}</td><td class="tbl-cell" colspan="6" style="color:#cbd5e1">— ยังไม่ได้เลือกผู้นิเทศตัวเอง —</td></tr>`;return;}
     picks.forEach((p,i)=>{
       h+=`<tr>`;
       if(i===0)h+=`<td class="tbl-cell" rowspan="${picks.length}" style="vertical-align:top;padding-left:10px">${nameCell(t)}</td>`;
-      h+=`<td class="tbl-cell">${roleTag(p.role)}</td><td class="tbl-cell">${esc(p.supervisor_name)}</td><td class="tbl-cell">${supFmtDate(p.date)}</td><td class="tbl-cell">คาบ ${p.period}</td><td class="tbl-cell"><div class="tsubj" style="background:#f1f5f9;color:#475569">${esc(p.subject_name)}</div><div class="ttch">${esc(p.class_name)}</div></td></tr>`;
+      h+=`<td class="tbl-cell">${roleTag(p.role)}</td><td class="tbl-cell">${esc(p.supervisor_name)}</td><td class="tbl-cell">${supFmtDate(p.date)}</td><td class="tbl-cell">คาบ ${p.period}</td><td class="tbl-cell" style="white-space:nowrap;color:#64748b">${PERIOD_TIME[p.period]||'-'}</td><td class="tbl-cell"><div class="tsubj" style="background:#f1f5f9;color:#475569">${esc(p.subject_name)}</div><div class="ttch">${esc(p.class_name)}</div></td></tr>`;
     });
   });
   return h+'</tbody></table>';
@@ -537,13 +537,13 @@ function drawSupSupervisee(need){
 function drawSupSupervisor(){
   const list=(supData.bySupervisor||[]).slice().sort((a,b)=>{const o={director:0,deputy:1,peer:2};return(o[a.role]-o[b.role])||a.name.localeCompare(b.name,'th');});
   if(!list.length)return'<div style="padding:24px;text-align:center;color:#94a3b8">ยังไม่มีข้อมูล</div>';
-  let h=`<table class="today-tbl"><thead><tr><th class="tbl-ph" style="text-align:left;padding-left:10px">ผู้นิเทศ</th><th class="tbl-ph">นิเทศครู</th><th class="tbl-ph">วันที่</th><th class="tbl-ph">คาบ</th><th class="tbl-ph">ห้อง / วิชา</th></tr></thead><tbody>`;
+  let h=`<table class="today-tbl"><thead><tr><th class="tbl-ph" style="text-align:left;padding-left:10px">ผู้นิเทศ</th><th class="tbl-ph">นิเทศครู</th><th class="tbl-ph">วันที่</th><th class="tbl-ph">คาบ</th><th class="tbl-ph">เวลา</th><th class="tbl-ph">ห้อง / วิชา</th></tr></thead><tbody>`;
   list.forEach(s=>{
     const obs=s.observations||[];
     obs.forEach((o,i)=>{
       h+=`<tr>`;
       if(i===0)h+=`<td class="tbl-cell" rowspan="${obs.length}" style="vertical-align:top;padding-left:10px"><b>${esc(s.name)}</b><div class="ttch">${roleTag(s.role)} · ${obs.length} คาบ</div></td>`;
-      h+=`<td class="tbl-cell">${esc(o.supervisee_name)}</td><td class="tbl-cell">${supFmtDate(o.date)}</td><td class="tbl-cell">คาบ ${o.period}</td><td class="tbl-cell"><div class="tsubj" style="background:#f1f5f9;color:#475569">${esc(o.subject_name)}</div><div class="ttch">${esc(o.class_name)}</div></td></tr>`;
+      h+=`<td class="tbl-cell">${esc(o.supervisee_name)}</td><td class="tbl-cell">${supFmtDate(o.date)}</td><td class="tbl-cell">คาบ ${o.period}</td><td class="tbl-cell" style="white-space:nowrap;color:#64748b">${PERIOD_TIME[o.period]||'-'}</td><td class="tbl-cell"><div class="tsubj" style="background:#f1f5f9;color:#475569">${esc(o.subject_name)}</div><div class="ttch">${esc(o.class_name)}</div></td></tr>`;
     });
   });
   return h+'</tbody></table>';
@@ -556,7 +556,7 @@ function drawSupByDate(){
   dates.forEach(dt=>{
     const items=byDate[dt].slice().sort((a,b)=>a.period-b.period);
     h+=`<div style="font-weight:700;color:#5b21b6;margin:14px 0 6px;font-size:.92rem">📅 ${supFmtDate(dt)}</div><table class="today-tbl" style="margin-bottom:6px"><tbody>`;
-    items.forEach(o=>{h+=`<tr><td class="tbl-cell" style="width:70px">คาบ ${o.period}</td><td class="tbl-cell">${roleTag(o.role)}</td><td class="tbl-cell"><b>${esc(o.supervisor_name)}</b></td><td class="tbl-cell">นิเทศ ${esc(o.supervisee_name)}</td><td class="tbl-cell"><div class="ttch">${esc(o.subject_name)} · ${esc(o.class_name)}</div></td></tr>`;});
+    items.forEach(o=>{h+=`<tr><td class="tbl-cell" style="width:70px">คาบ ${o.period}</td><td class="tbl-cell" style="width:92px;white-space:nowrap;color:#64748b">${PERIOD_TIME[o.period]||'-'}</td><td class="tbl-cell">${roleTag(o.role)}</td><td class="tbl-cell"><b>${esc(o.supervisor_name)}</b></td><td class="tbl-cell">นิเทศ ${esc(o.supervisee_name)}</td><td class="tbl-cell"><div class="ttch">${esc(o.subject_name)} · ${esc(o.class_name)}</div></td></tr>`;});
     h+='</tbody></table>';
   });
   return h;
