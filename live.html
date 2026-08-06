@@ -272,6 +272,27 @@ body.tv .shell-sub,body.tv #day-panel,body.tv #links,body.tv #foot,body.tv #lege
 body.tv .panel-hd{margin-bottom:var(--space-sm)}
 body.tv .tv-btn{background:oklch(100% 0 0 / .2)}
 
+/* ── โหมดฝัง (?embed=1): พื้นโปร่งใส ไม่มีหัว ใช้ฝังใน iframe หน้าแรกโรงเรียน ── */
+body.embed{
+  --color-paper:transparent;
+  --color-surface:oklch(100% 0 0 / .055);
+  --color-surface-2:oklch(100% 0 0 / .09);
+  --color-line:oklch(100% 0 0 / .13);
+  --color-line-strong:oklch(100% 0 0 / .22);
+  --text-base:1.05rem; --text-lg:1.3rem; --text-sm:.95rem; --text-xs:.85rem;
+}
+body.embed .shell{display:none}
+body.embed .panel{background:transparent;border:none;box-shadow:none;padding:0}
+body.embed main{padding:0}
+body.embed .panel-hd{margin-bottom:var(--space-sm);justify-content:center}
+body.embed .panel-title{display:none}   /* หน้าที่ฝังมีหัวข้อของตัวเองอยู่แล้ว */
+/* กรอบ iframe แคบกว่าจอทีวี → ให้คอลัมน์ยืดตามความกว้างจริง */
+body.embed .rooms{grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-xs)}
+@media (max-width:900px){body.embed .rooms{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){body.embed .rooms{grid-template-columns:1fr}}
+body.embed .room{padding:var(--space-xs) var(--space-xs) var(--space-xs) var(--space-sm)}
+body.embed .band{margin-bottom:var(--space-md)}
+
 @media (max-width:640px){
   main{padding:var(--space-md) var(--space-sm) var(--space-xl)}
   .panel{padding:var(--space-md);border-radius:var(--radius)}
@@ -586,10 +607,12 @@ async function keepAwake(on){
     else if(wakeLock){await wakeLock.release();wakeLock=null;}
   }catch(e){/* บางเบราว์เซอร์ไม่รองรับ — ไม่เป็นไร */}
 }
+const IS_EMBED=new URLSearchParams(location.search).get('embed')==='1'||window.top!==window.self;
 function toggleTv(force){
   const on=force!==undefined?force:!document.body.classList.contains('tv');
   document.body.classList.toggle('tv',on);
   document.getElementById('tv-btn').textContent=on?'✕ ออกจากโหมดจอทีวี':'📺 โหมดจอทีวี';
+  if(IS_EMBED)return renderNow();   // ฝังใน iframe: ไม่ขอเต็มจอ/ไม่ล็อกจอ (เจ้าของหน้าคุมเอง)
   keepAwake(on);
   if(on&&document.documentElement.requestFullscreen)document.documentElement.requestFullscreen().catch(()=>{});
   else if(!on&&document.fullscreenElement)document.exitFullscreen().catch(()=>{});
@@ -620,10 +643,14 @@ async function init(retry=0){
       ['index.html','ตารางสอน ม.1–3 (รายละเอียด)']
     ].map(([f,t])=>`<a class="link-btn" href="${SRC}${f}">${t}</a>`).join('');
     renderLegend();renderNow();renderDay();
-    if(new URLSearchParams(location.search).get('tv')==='1')toggleTv(true);
+    if(IS_EMBED)document.body.classList.add('embed');
+    if(IS_EMBED||new URLSearchParams(location.search).get('tv')==='1')toggleTv(true);
     document.getElementById('foot').textContent=
       `ข้อมูล ${ROOMS.length} ห้อง โหลดเมื่อ ${loadedAt.toLocaleTimeString('th-TH',{hour12:false})} น. — ดึงสดจากหน้าตารางสอนของแต่ละช่วงชั้น`;
-    tickers.push(setInterval(renderNow,15000),setInterval(()=>renderShell(new Date()),1000));
+    tickers.push(setInterval(renderNow,15000));
+    // โหมดฝังซ่อนแถบหัวอยู่แล้ว → ไม่ต้องเดินนาฬิกาทุกวินาที
+    // (นอกจากเปลืองแรงเครื่องแล้ว การ re-render ถี่ ๆ ยังไปกวน smooth scroll ของหน้าที่ฝังเราไว้)
+    if(!IS_EMBED)tickers.push(setInterval(()=>renderShell(new Date()),1000));
   }catch(err){
     // เน็ตโรงเรียนสะดุดครั้งเดียวไม่ควรทำให้จอที่เปิดค้างทั้งวันตาย → ลองใหม่เองทุก 20 วินาที
     const wait=20;
