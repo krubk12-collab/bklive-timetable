@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f172a">
+<title>ภาพรวมการสอนสด — โรงเรียนชุมชนวัดบางโค</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* Hallmark · macrostructure: Workbench · genre: modern-minimal · tone: utilitarian
+ * theme: custom (vibe: "โรงเรียนไทย · แผงควบคุมสด · อ่านไกล" · paper oklch(97% 0.005 250)
+ *        · accent oklch(55% 0.13 200) cool · display IBM Plex Sans Thai + body Sarabun)
+ * axes: light paper / rounded-sans display / cool accent
+ * pre-emit critique: P4 H5 E4 S5 R4 V4
+ */
+:root{
+  /* พื้น/หมึก */
+  --color-paper:oklch(97% 0.005 250);
+  --color-surface:oklch(100% 0 0);
+  --color-surface-2:oklch(96.5% 0.008 250);
+  --color-ink:oklch(27% 0.03 260);
+  --color-ink-soft:oklch(50% 0.02 260);
+  --color-ink-mute:oklch(68% 0.015 260);
+  --color-line:oklch(91% 0.008 250);
+  --color-line-strong:oklch(85% 0.012 250);
+  --color-shell:oklch(28% 0.05 260);
+  --color-shell-2:oklch(38% 0.07 250);
+  --color-on-shell:oklch(99% 0 0);
+  /* ช่วงชั้น (ยืมจากหน้าเดิม: ป.1-3 ส้ม · ป.4-6 เขียว · ม.1-3 น้ำเงิน) */
+  --color-band-p13:oklch(66% 0.15 65);
+  --color-band-p46:oklch(58% 0.13 160);
+  --color-band-sec:oklch(55% 0.15 250);
+  --color-band-p13-soft:oklch(96% 0.04 70);
+  --color-band-p46-soft:oklch(95% 0.04 165);
+  --color-band-sec-soft:oklch(95% 0.04 250);
+  /* กลุ่มสาระ */
+  --color-a-thai:oklch(60% 0.19 25);
+  --color-a-math:oklch(58% 0.16 255);
+  --color-a-sci:oklch(60% 0.15 150);
+  --color-a-soc:oklch(70% 0.15 70);
+  --color-a-eng:oklch(56% 0.18 300);
+  --color-a-pe:oklch(65% 0.12 210);
+  --color-a-art:oklch(64% 0.19 350);
+  --color-a-work:oklch(65% 0.16 50);
+  --color-a-act:oklch(65% 0.02 260);
+  /* สถานะ */
+  --color-live:oklch(60% 0.18 145);
+  --color-break:oklch(70% 0.15 70);
+  --color-off:oklch(60% 0.02 260);
+  --color-focus:oklch(55% 0.16 250);
+  /* ตัวอักษร */
+  --font-display:'IBM Plex Sans Thai',system-ui,sans-serif;
+  --font-body:'Sarabun',system-ui,sans-serif;
+  --text-xs:.75rem; --text-sm:.85rem; --text-base:.95rem; --text-lg:1.1rem;
+  --text-xl:1.35rem; --text-2xl:1.75rem; --text-3xl:2.4rem;
+  /* ระยะ 4pt */
+  --space-2xs:4px; --space-xs:8px; --space-sm:12px; --space-md:16px;
+  --space-lg:24px; --space-xl:32px; --space-2xl:48px;
+  --radius-sm:8px; --radius:12px; --radius-lg:18px; --radius-pill:999px;
+  --rule:1px solid var(--color-line);
+  --shadow-sm:0 1px 2px oklch(27% 0.03 260 / .06);
+  --shadow:0 2px 4px oklch(27% 0.03 260 / .05),0 8px 24px oklch(27% 0.03 260 / .06);
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --ease-in-out:cubic-bezier(.65,0,.35,1);
+  --dur-fast:140ms; --dur:240ms;
+}
+*{box-sizing:border-box}
+html,body{overflow-x:clip;margin:0}
+body{
+  font-family:var(--font-body);background:var(--color-paper);color:var(--color-ink);
+  font-size:var(--text-base);line-height:1.5;-webkit-text-size-adjust:100%;
+}
+h1,h2,h3{font-family:var(--font-display);font-style:normal;margin:0;overflow-wrap:anywhere;min-width:0}
+
+/* ── แถบหัว ── */
+.shell{
+  position:sticky;top:0;z-index:40;
+  background:linear-gradient(120deg,var(--color-shell),var(--color-shell-2));
+  color:var(--color-on-shell);padding:var(--space-sm) var(--space-md);
+  box-shadow:var(--shadow-sm);
+}
+.shell-in{max-width:1560px;margin:0 auto;display:flex;align-items:center;gap:var(--space-md);flex-wrap:wrap}
+.shell-title{font-family:var(--font-display);font-size:var(--text-lg);font-weight:700;letter-spacing:-.01em}
+.shell-sub{font-size:var(--text-xs);color:oklch(88% 0.02 250);margin-top:2px}
+.shell-clock{margin-left:auto;display:flex;align-items:center;gap:var(--space-sm);flex-wrap:wrap}
+.clock-time{
+  font-family:var(--font-display);font-size:var(--text-2xl);font-weight:700;
+  font-variant-numeric:tabular-nums;letter-spacing:.01em;line-height:1;
+}
+.clock-date{font-size:var(--text-sm);color:oklch(88% 0.02 250)}
+.state-chip{
+  display:inline-flex;align-items:center;gap:var(--space-2xs);
+  padding:5px 14px;border-radius:var(--radius-pill);
+  font-size:var(--text-sm);font-weight:700;white-space:nowrap;
+  background:oklch(100% 0 0 / .15);border:1px solid oklch(100% 0 0 / .3);
+}
+.state-chip.is-live{background:var(--color-live);border-color:transparent}
+.state-chip.is-break{background:var(--color-break);border-color:transparent;color:oklch(25% 0.05 70)}
+.pulse{width:9px;height:9px;border-radius:50%;background:currentColor;animation:pulse 2s var(--ease-in-out) infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* ── โครงหน้า ── */
+main{max-width:1560px;margin:0 auto;padding:var(--space-lg) var(--space-md) var(--space-2xl)}
+.panel{
+  background:var(--color-surface);border:var(--rule);border-radius:var(--radius-lg);
+  box-shadow:var(--shadow);padding:var(--space-lg);margin-bottom:var(--space-lg);
+}
+.panel-hd{display:flex;align-items:baseline;gap:var(--space-sm);flex-wrap:wrap;margin-bottom:var(--space-md)}
+.panel-title{font-size:var(--text-xl);font-weight:700}
+.panel-note{font-size:var(--text-sm);color:var(--color-ink-soft)}
+.panel-note strong{color:var(--color-ink)}
+
+/* ── แถบคาบของแต่ละสาย ── */
+.tracks{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:var(--space-sm);margin-bottom:var(--space-lg)}
+.track{
+  border:var(--rule);border-radius:var(--radius);padding:var(--space-sm) var(--space-md);
+  background:var(--color-surface-2);border-left:5px solid var(--tc,var(--color-line-strong));
+}
+.track-top{display:flex;align-items:baseline;gap:var(--space-xs);flex-wrap:wrap}
+.track-name{font-family:var(--font-display);font-weight:700;font-size:var(--text-base)}
+.track-period{margin-left:auto;font-weight:700;color:var(--tc);white-space:nowrap}
+.track-time{font-size:var(--text-sm);color:var(--color-ink-soft);font-variant-numeric:tabular-nums}
+.track-bar{height:7px;border-radius:var(--radius-pill);background:var(--color-line);margin-top:var(--space-xs);overflow:hidden}
+.track-fill{height:100%;background:var(--tc);border-radius:inherit;transition:width var(--dur) var(--ease-out)}
+.track-left{font-size:var(--text-sm);color:var(--color-ink-soft);margin-top:var(--space-2xs)}
+.track-left b{color:var(--tc);font-variant-numeric:tabular-nums}
+
+/* ── กริดห้องเรียน ── */
+.band{margin-bottom:var(--space-lg)}
+.band-hd{
+  display:flex;align-items:center;gap:var(--space-xs);margin-bottom:var(--space-xs);
+  font-family:var(--font-display);font-weight:700;font-size:var(--text-base);
+}
+.band-dot{width:12px;height:12px;border-radius:4px;background:var(--bc)}
+.band-count{margin-left:auto;font-family:var(--font-body);font-weight:500;font-size:var(--text-sm);color:var(--color-ink-soft)}
+.rooms{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:var(--space-sm)}
+.room{
+  position:relative;border:1.5px solid var(--color-line);border-radius:var(--radius);
+  background:var(--color-surface);padding:var(--space-sm) var(--space-sm) var(--space-sm) var(--space-md);
+  overflow:hidden;transition:transform var(--dur-fast) var(--ease-out),box-shadow var(--dur-fast) var(--ease-out);
+}
+.room::before{content:'';position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--ac,var(--color-line-strong))}
+.room-name{font-family:var(--font-display);font-weight:700;font-size:var(--text-lg);line-height:1.2}
+.room-subj{
+  font-weight:600;font-size:var(--text-base);margin-top:var(--space-2xs);
+  color:var(--ac);overflow-wrap:anywhere;
+}
+.room-teacher{font-size:var(--text-sm);color:var(--color-ink-soft);margin-top:2px;overflow-wrap:anywhere}
+.room.is-free{background:var(--color-surface-2);border-style:dashed}
+.room.is-free .room-subj{color:var(--color-ink-mute);font-weight:500}
+.room-next{font-size:var(--text-xs);color:var(--color-ink-mute);margin-top:var(--space-xs);padding-top:var(--space-xs);border-top:var(--rule)}
+.room-next b{color:var(--color-ink-soft);font-weight:600}
+
+/* ── ตารางวันนี้ ── */
+.daybar{display:flex;gap:var(--space-2xs);flex-wrap:wrap;margin-bottom:var(--space-md)}
+.day-btn{
+  font-family:var(--font-body);font-size:var(--text-sm);font-weight:600;
+  padding:9px 18px;border-radius:var(--radius-pill);cursor:pointer;
+  border:1.5px solid var(--color-line-strong);background:var(--color-surface);color:var(--color-ink-soft);
+  transition:background var(--dur-fast) var(--ease-out),color var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out);
+}
+.day-btn:hover{border-color:var(--color-focus);color:var(--color-ink)}
+.day-btn:focus-visible{outline:3px solid var(--color-focus);outline-offset:2px}
+.day-btn:active{transform:translateY(1px)}
+.day-btn[aria-pressed="true"]{background:var(--color-shell);border-color:var(--color-shell);color:var(--color-on-shell)}
+.tbl-wrap{overflow-x:auto;border:var(--rule);border-radius:var(--radius);background:var(--color-surface)}
+table.grid{border-collapse:collapse;width:max-content;min-width:100%;font-size:var(--text-sm)}
+.grid th,.grid td{border:1px solid var(--color-line);padding:6px 8px;text-align:center;vertical-align:middle}
+.grid thead th{
+  background:var(--color-surface-2);font-family:var(--font-display);font-weight:700;
+  position:sticky;top:0;z-index:2;white-space:nowrap;
+}
+.grid thead th.now{background:var(--color-shell);color:var(--color-on-shell)}
+.grid .ph-time{display:block;font-family:var(--font-body);font-weight:500;font-size:var(--text-xs);color:var(--color-ink-soft)}
+.grid thead th.now .ph-time{color:oklch(88% 0.02 250)}
+.grid td.room-c,.grid th.room-c{
+  position:sticky;left:0;z-index:1;background:var(--color-surface);
+  font-family:var(--font-display);font-weight:700;text-align:left;white-space:nowrap;
+  border-right:2px solid var(--color-line-strong);min-width:88px;
+}
+.grid thead th.room-c{z-index:3;background:var(--color-surface-2)}
+.grid td.cell{min-width:118px}
+.grid td.cell.now{background:var(--color-band-sec-soft);box-shadow:inset 0 0 0 2px var(--color-focus)}
+.grid td.cell.past{opacity:.5}
+.grid td.lunch{background:repeating-linear-gradient(45deg,var(--color-surface-2),var(--color-surface-2) 6px,var(--color-surface) 6px,var(--color-surface) 12px);min-width:34px}
+.c-subj{font-weight:600;color:var(--cc,var(--color-ink));line-height:1.25}
+.c-tch{font-size:var(--text-xs);color:var(--color-ink-soft);line-height:1.3;margin-top:1px}
+.c-dash{color:var(--color-ink-mute)}
+.sub-hd{
+  font-family:var(--font-display);font-weight:700;font-size:var(--text-base);
+  margin:var(--space-lg) 0 var(--space-xs);display:flex;align-items:center;gap:var(--space-xs);
+}
+.sub-hd:first-of-type{margin-top:0}
+.sub-hd .band-dot{width:10px;height:10px}
+
+/* ── legend + footer ── */
+.legend{display:flex;flex-wrap:wrap;gap:var(--space-xs) var(--space-md);margin-top:var(--space-md);font-size:var(--text-xs);color:var(--color-ink-soft)}
+.lg{display:inline-flex;align-items:center;gap:5px}
+.lg i{width:11px;height:11px;border-radius:3px;background:var(--lc);display:inline-block}
+.links{display:flex;flex-wrap:wrap;gap:var(--space-xs);margin-top:var(--space-md)}
+.link-btn{
+  font-size:var(--text-sm);font-weight:600;text-decoration:none;white-space:nowrap;
+  padding:9px 16px;border-radius:var(--radius-sm);
+  border:1.5px solid var(--color-line-strong);background:var(--color-surface);color:var(--color-ink);
+  transition:border-color var(--dur-fast) var(--ease-out),background var(--dur-fast) var(--ease-out);
+}
+.link-btn:hover{border-color:var(--color-focus);background:var(--color-surface-2)}
+.link-btn:focus-visible{outline:3px solid var(--color-focus);outline-offset:2px}
+.foot{text-align:center;color:var(--color-ink-mute);font-size:var(--text-xs);padding-bottom:var(--space-lg)}
+
+/* ── สถานะโหลด/ผิดพลาด ── */
+.state-msg{text-align:center;padding:var(--space-2xl) var(--space-md);color:var(--color-ink-soft)}
+.spinner{
+  width:26px;height:26px;border:3px solid var(--color-line);border-top-color:var(--color-focus);
+  border-radius:50%;animation:spin .7s linear infinite;margin:0 auto var(--space-sm);
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.err{color:var(--color-a-thai);font-weight:600}
+.skel{background:var(--color-surface-2);border-radius:var(--radius);height:96px;animation:skel 1.4s var(--ease-in-out) infinite}
+@keyframes skel{0%,100%{opacity:1}50%{opacity:.55}}
+
+@media (max-width:640px){
+  main{padding:var(--space-md) var(--space-sm) var(--space-xl)}
+  .panel{padding:var(--space-md);border-radius:var(--radius)}
+  .clock-time{font-size:var(--text-xl)}
+  .shell-clock{width:100%;margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<header class="shell">
+  <div class="shell-in">
+    <div>
+      <h1 class="shell-title">ภาพรวมการสอนสด — โรงเรียนชุมชนวัดบางโค</h1>
+      <div class="shell-sub">ทุกช่วงชั้น ป.1 – ม.3 · 18 ห้องเรียน · อัปเดตอัตโนมัติทุก 15 วินาที</div>
+    </div>
+    <div class="shell-clock">
+      <div>
+        <div class="clock-time" id="clock">--:--:--</div>
+        <div class="clock-date" id="today-date">—</div>
+      </div>
+      <span class="state-chip" id="state-chip">กำลังโหลด…</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="panel" aria-labelledby="now-title">
+    <div class="panel-hd">
+      <h2 class="panel-title" id="now-title">กำลังเรียนตอนนี้</h2>
+      <div class="panel-note" id="now-summary">—</div>
+    </div>
+    <div class="tracks" id="tracks"></div>
+    <div id="rooms-area">
+      <div class="state-msg"><div class="spinner"></div>กำลังดึงตารางสอนทั้งโรงเรียน…</div>
+    </div>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <section class="panel" aria-labelledby="day-title">
+    <div class="panel-hd">
+      <h2 class="panel-title" id="day-title">ตารางสอนทั้งวัน</h2>
+      <div class="panel-note" id="day-note">—</div>
+    </div>
+    <div class="daybar" id="daybar" role="group" aria-label="เลือกวัน"></div>
+    <div id="day-area"><div class="skel"></div></div>
+  </section>
+
+  <div class="links">
+    <a class="link-btn" href="timetable_p13.html">ตารางสอน ป.1–3 (รายละเอียด)</a>
+    <a class="link-btn" href="timetable_p46.html">ตารางสอน ป.4–6 (รายละเอียด)</a>
+    <a class="link-btn" href="index.html">ตารางสอน ม.1–3 (รายละเอียด)</a>
+  </div>
+  <p class="foot" id="foot">—</p>
+</main>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// ข้อมูลทั้งหมดดึงสดจากหน้าตารางสอนเดิม — ไม่มีสำเนาตารางในไฟล์นี้
+// แก้ตารางที่ timetable_p13.html / timetable_p46.html / Google Sheets (มัธยม) แล้วหน้านี้ตามเอง
+// ═══════════════════════════════════════════════════════════════
+const SHEET={
+  teachers:'https://docs.google.com/spreadsheets/d/1HZw5GndLG3EE4odpPiOX8ucGq8PpovBomULgUZVn3Yo/gviz/tq?tqx=out:csv',
+  subjects:'https://docs.google.com/spreadsheets/d/1BYF9tLnaBX9IHXafD32i1s21NOlnYQKPgIrXoLI8asU/gviz/tq?tqx=out:csv',
+  schedule:'https://docs.google.com/spreadsheets/d/14ZyWxubxyrpJN3GGN8YE8llP6ynZHHMOHyzrh3v6sng/gviz/tq?tqx=out:csv'
+};
+// ประถม: คาบ 2-7 คาบละ 60 นาที · มัธยม: คาบ 1-8 คาบละ 50 นาที (พักเที่ยงคนละเวลา)
+const PB_PRI=[[500,510,0],[510,570,2],[570,630,3],[630,690,4],[690,750,-1],[750,810,5],[810,870,6],[870,930,7]];
+const PB_SEC=[[510,560,1],[560,610,2],[610,660,3],[660,710,4],[710,770,-1],[770,820,5],[820,870,6],[870,930,7],[930,990,8]];
+const BANDS=[
+  {key:'p13',label:'ประถมศึกษาตอนต้น (ป.1–3)',src:'timetable_p13.html',pb:PB_PRI,color:'var(--color-band-p13)',soft:'var(--color-band-p13-soft)'},
+  {key:'p46',label:'ประถมศึกษาตอนปลาย (ป.4–6)',src:'timetable_p46.html',pb:PB_PRI,color:'var(--color-band-p46)',soft:'var(--color-band-p46-soft)'},
+  {key:'sec',label:'มัธยมศึกษา (ม.1–3)',pb:PB_SEC,color:'var(--color-band-sec)',soft:'var(--color-band-sec-soft)'}
+];
+const AREA_OF={
+  'ภาษาไทย':'ภาษาไทย','คณิตศาสตร์':'คณิตศาสตร์',
+  'วิทยาศาสตร์':'วิทยาศาสตร์และเทคโนโลยี','วิทยาการคำนวณ':'วิทยาศาสตร์และเทคโนโลยี',
+  'สังคมศึกษา':'สังคมศึกษาฯ','ประวัติศาสตร์':'สังคมศึกษาฯ','หน้าที่พลเมือง':'สังคมศึกษาฯ',
+  'การป้องกันการทุจริต':'สังคมศึกษาฯ','ภาษาอังกฤษ':'ภาษาต่างประเทศ',
+  'สุขศึกษา':'สุขศึกษาและพลศึกษา','พลศึกษา':'สุขศึกษาและพลศึกษา',
+  'ทัศนศิลป์':'ศิลปะ','ดนตรี':'ศิลปะ','นาฏศิลป์':'ศิลปะ',
+  'การงานอาชีพ':'การงานอาชีพ','งานใบตอง 1':'การงานอาชีพ','งานใบตอง 2':'การงานอาชีพ','งานใบตอง 3':'การงานอาชีพ',
+  'แนะแนว':'กิจกรรมพัฒนาผู้เรียน','ชุมนุม':'กิจกรรมพัฒนาผู้เรียน','ลูกเสือ':'กิจกรรมพัฒนาผู้เรียน',
+  'ซ่อมเสริม':'กิจกรรมพัฒนาผู้เรียน','สวดมนต์':'กิจกรรมพัฒนาผู้เรียน','จริยธรรม':'กิจกรรมพัฒนาผู้เรียน'
+};
+const AREA_COLOR={
+  'ภาษาไทย':'var(--color-a-thai)','คณิตศาสตร์':'var(--color-a-math)',
+  'วิทยาศาสตร์และเทคโนโลยี':'var(--color-a-sci)','สังคมศึกษาฯ':'var(--color-a-soc)',
+  'ภาษาต่างประเทศ':'var(--color-a-eng)','สุขศึกษาและพลศึกษา':'var(--color-a-pe)',
+  'ศิลปะ':'var(--color-a-art)','การงานอาชีพ':'var(--color-a-work)','กิจกรรมพัฒนาผู้เรียน':'var(--color-a-act)'
+};
+const DAY_TH={1:'จันทร์',2:'อังคาร',3:'พุธ',4:'พฤหัสบดี',5:'ศุกร์'};
+const MONTH_TH=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+
+// rooms[] = {id, name, band, map:{dow:{period:{subj,teacher}}}}
+let ROOMS=[], loadedAt=null, viewDow=null;
+
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const toMins=(h,m)=>h*60+m;
+const fmtMins=t=>`${String(Math.floor(t/60)).padStart(2,'0')}:${String(t%60).padStart(2,'0')}`;
+const jsDay=d=>(d>=1&&d<=5)?d:0;
+// ประถมเดากลุ่มสาระจากชื่อวิชา · มัธยมใช้ learning_area ที่มากับชีตโดยตรง (ชื่อวิชามีเลขห้องต่อท้าย เดาไม่ได้)
+const areaColor=ent=>AREA_COLOR[(typeof ent==='string'?AREA_OF[ent]:ent.area||AREA_OF[ent.subj])||'']||'var(--color-a-act)';
+
+// ── ดึง literal (const X = [...] / {...}) ออกจากไฟล์ HTML เดิม โดยนับวงเล็บให้สมดุล ──
+function extractLiteral(src,name){
+  const m=new RegExp('const\\s+'+name+'\\s*=\\s*').exec(src);
+  if(!m)throw new Error('ไม่พบ '+name);
+  const i=m.index+m[0].length, open=src[i], close=open==='['?']':'}';
+  let depth=0,inStr=false,q='';
+  for(let j=i;j<src.length;j++){
+    const c=src[j];
+    if(inStr){if(c===q&&src[j-1]!=='\\')inStr=false;continue;}
+    if(c==='"'||c==="'"){inStr=true;q=c;continue;}
+    if(c===open)depth++;
+    else if(c===close){depth--;if(!depth)return Function('return '+src.slice(i,j+1))();}
+  }
+  throw new Error('วงเล็บไม่สมดุลใน '+name);
+}
+async function loadPrimary(band){
+  const res=await fetch(band.src,{cache:'no-cache'});
+  if(!res.ok)throw new Error(`${band.src} HTTP ${res.status}`);
+  const src=await res.text();
+  const T=extractLiteral(src,'T'), SCH=extractLiteral(src,'SCH_RAW');
+  const CL=extractLiteral(src,'CL_MAP'), ORDER=extractLiteral(src,'ROOM_ORDER');
+  const rooms=ORDER.map(id=>({id,name:CL[id]||id,band:band.key,map:{}}));
+  const byId=Object.fromEntries(rooms.map(r=>[r.id,r]));
+  SCH.forEach(([cid,subj,tkeys,dow,period])=>{
+    const room=byId[cid];              // ทิ้งคาบนอกช่วงชั้น (ext) ที่ไม่อยู่ใน ROOM_ORDER
+    if(!room)return;
+    (room.map[dow]??={})[period]={subj,teacher:String(tkeys).split('+').map(k=>T[k]||k).join(' / ')};
+  });
+  return rooms;
+}
+function parseCSV(text){
+  const lines=text.trim().split(/\r?\n/);if(lines.length<2)return[];
+  const cut=line=>{const out=[];let cur='',inQ=false;
+    for(let i=0;i<line.length;i++){const c=line[i];
+      if(c==='"'){if(inQ&&line[i+1]==='"'){cur+='"';i++;}else inQ=!inQ;}
+      else if(c===','&&!inQ){out.push(cur.trim());cur='';}else cur+=c;}
+    out.push(cur.trim());return out;};
+  const head=cut(lines[0]).map(h=>h.replace(/^"|"$/g,''));
+  return lines.slice(1).map(l=>{const v=cut(l),o={};head.forEach((h,i)=>o[h]=(v[i]||'').replace(/^"|"$/g,'').trim());return o;}).filter(r=>r[head[0]]);
+}
+async function loadSecondary(){
+  const [tRows,sRows,scRows]=await Promise.all(
+    [SHEET.teachers,SHEET.subjects,SHEET.schedule].map(async u=>{
+      const r=await fetch(u);if(!r.ok)throw new Error('Google Sheets HTTP '+r.status);return parseCSV(await r.text());
+    }));
+  const T={};tRows.forEach(r=>{if(/^T\d+$/.test(r.teacher_id||''))T[r.teacher_id]=`${r.first_name} ${r.last_name}`.trim();});
+  const S={};sRows.forEach(r=>{if(/^SB\d+$/.test(r.subject_id||''))S[r.subject_id]={n:r.subject_name,a:r.learning_area||''};});
+  const CL={C17:'ม.1/1',C18:'ม.1/2',C19:'ม.2/1',C20:'ม.2/2',C21:'ม.3/1',C22:'ม.3/2'};
+  const rooms=Object.keys(CL).map(id=>({id,name:CL[id],band:'sec',map:{}}));
+  const byId=Object.fromEntries(rooms.map(r=>[r.id,r]));
+  scRows.filter(r=>r.class_id&&r.subject_id&&r.teacher_id&&String(r.is_active).toUpperCase()==='TRUE')
+    .forEach(r=>{
+      const room=byId[r.class_id];if(!room)return;
+      const d=+r.day_of_week,p=+r.period;
+      const slot=(room.map[d]??={});
+      const sub=S[r.subject_id]||{n:r.subject_id,a:''}, tch=T[r.teacher_id]||r.teacher_id;
+      // คาบเดียวกันมีครูมากกว่า 1 คน (สอนร่วม) → ต่อชื่อ
+      slot[p]=slot[p]?{...slot[p],teacher:slot[p].teacher+' / '+tch}:{subj:sub.n,area:sub.a,teacher:tch};
+    });
+  return rooms;
+}
+
+// ── หาคาบปัจจุบันของแต่ละสาย ──
+function curPeriod(pb,tm){
+  for(const [s,e,p] of pb) if(tm>=s&&tm<e) return {s,e,p};
+  return null;
+}
+function nextPeriod(pb,tm){
+  for(const [s,e,p] of pb) if(p>0&&s>=tm) return {s,e,p};
+  return null;
+}
+function bandStatus(band,now){
+  const dow=jsDay(now.getDay()), tm=toMins(now.getHours(),now.getMinutes());
+  const first=band.pb[0][0], last=band.pb[band.pb.length-1][1];
+  if(!dow) return {kind:'holiday',dow:0};
+  if(tm<first) return {kind:'before',dow,next:nextPeriod(band.pb,tm)};
+  if(tm>=last) return {kind:'after',dow};
+  const cur=curPeriod(band.pb,tm);
+  if(!cur) return {kind:'gap',dow,next:nextPeriod(band.pb,tm)};
+  if(cur.p===-1) return {kind:'lunch',dow,cur,next:nextPeriod(band.pb,tm)};
+  if(cur.p===0) return {kind:'homeroom',dow,cur,next:nextPeriod(band.pb,tm)};
+  return {kind:'teaching',dow,cur,next:nextPeriod(band.pb,tm),tm};
+}
+
+// ── แถบสถานะรวมบนหัว ──
+function renderShell(now){
+  const dow=jsDay(now.getDay());
+  document.getElementById('clock').textContent=now.toLocaleTimeString('th-TH',{hour12:false});
+  document.getElementById('today-date').textContent=
+    `วัน${['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'][now.getDay()]}ที่ ${now.getDate()} ${MONTH_TH[now.getMonth()]} ${now.getFullYear()+543}`;
+  const chip=document.getElementById('state-chip');
+  const anyTeaching=BANDS.some(b=>bandStatus(b,now).kind==='teaching');
+  const anyLunch=BANDS.some(b=>['lunch','homeroom','gap'].includes(bandStatus(b,now).kind));
+  chip.className='state-chip'+(anyTeaching?' is-live':anyLunch?' is-break':'');
+  chip.innerHTML=!dow?'📅 วันหยุด — ไม่มีการเรียนการสอน'
+    :anyTeaching?'<span class="pulse"></span> กำลังสอนอยู่'
+    :anyLunch?'🍱 ช่วงพัก'
+    :toMins(now.getHours(),now.getMinutes())<PB_PRI[0][0]?'🌅 ก่อนเข้าเรียน':'🏠 เลิกเรียนแล้ว';
+}
+
+// ── แถบคาบรายสาย + กริดห้อง ──
+function renderNow(){
+  const now=new Date();
+  renderShell(now);
+  if(!ROOMS.length)return;
+  const dow=jsDay(now.getDay());
+  const tm=toMins(now.getHours(),now.getMinutes());
+
+  document.getElementById('tracks').innerHTML=BANDS.map(b=>{
+    const st=bandStatus(b,now);
+    let head='',bar='',left='';
+    if(st.kind==='teaching'){
+      const total=st.cur.e-st.cur.s, done=tm-st.cur.s;
+      head=`<span class="track-period">คาบ ${st.cur.p}</span>`;
+      bar=`<div class="track-bar"><div class="track-fill" style="width:${Math.min(100,Math.round(done/total*100))}%"></div></div>`;
+      left=`<div class="track-left">${fmtMins(st.cur.s)}–${fmtMins(st.cur.e)} น. · เหลืออีก <b>${st.cur.e-tm} นาที</b></div>`;
+    }else{
+      const msg={holiday:'วันหยุด',before:'ยังไม่เริ่มเรียน',after:'เลิกเรียนแล้ว',lunch:'พักกลางวัน',homeroom:'โฮมรูม',gap:'ช่วงพัก'}[st.kind];
+      head=`<span class="track-period" style="color:var(--color-ink-mute)">${msg}</span>`;
+      left=`<div class="track-left">${st.next?`คาบถัดไป คาบ ${st.next.p} เวลา ${fmtMins(st.next.s)} น.`:'—'}</div>`;
+    }
+    return `<div class="track" style="--tc:${b.color}"><div class="track-top"><span class="track-name">${esc(b.label)}</span>${head}</div>${bar}${left}</div>`;
+  }).join('');
+
+  const area=document.getElementById('rooms-area');
+  if(!dow){
+    area.innerHTML=`<div class="state-msg">วันนี้เป็นวันหยุด — เลือกดูตารางของแต่ละวันได้ที่หัวข้อ “ตารางสอนทั้งวัน” ด้านล่าง</div>`;
+    document.getElementById('now-summary').textContent='ไม่มีคาบเรียนวันนี้';
+    return;
+  }
+  let teachingRooms=0; const teachers=new Set();
+  area.innerHTML=BANDS.map(b=>{
+    const st=bandStatus(b,now);
+    const rooms=ROOMS.filter(r=>r.band===b.key);
+    const cards=rooms.map(r=>{
+      const ent=st.kind==='teaching'?r.map[dow]?.[st.cur.p]:null;
+      const nxt=st.next?r.map[dow]?.[st.next.p]:null;
+      const nextLine=nxt?`<div class="room-next">ถัดไป <b>${esc(nxt.subj)}</b> · ${fmtMins(st.next.s)} น.</div>`:'';
+      if(!ent){
+        const why=st.kind==='teaching'?'— ว่าง —':{lunch:'พักกลางวัน',homeroom:'โฮมรูม',before:'ยังไม่เริ่มเรียน',after:'เลิกเรียนแล้ว',gap:'ช่วงพัก'}[st.kind]||'—';
+        return `<div class="room is-free"><div class="room-name">${esc(r.name)}</div><div class="room-subj">${why}</div>${nextLine}</div>`;
+      }
+      teachingRooms++; ent.teacher.split(' / ').forEach(t=>teachers.add(t));
+      return `<div class="room" style="--ac:${areaColor(ent)}">
+        <div class="room-name">${esc(r.name)}</div>
+        <div class="room-subj">${esc(ent.subj)}</div>
+        <div class="room-teacher">${esc(ent.teacher)}</div>${nextLine}</div>`;
+    }).join('');
+    return `<div class="band"><div class="band-hd" style="--bc:${b.color}"><span class="band-dot"></span>${esc(b.label)}
+      <span class="band-count">${rooms.length} ห้อง</span></div><div class="rooms">${cards}</div></div>`;
+  }).join('');
+  document.getElementById('now-summary').innerHTML=
+    `กำลังเรียน <strong>${teachingRooms}</strong> จาก <strong>${ROOMS.length}</strong> ห้อง · ครูกำลังสอน <strong>${teachers.size}</strong> คน`;
+}
+
+// ── ตารางทั้งวัน (2 ตาราง เพราะประถม/มัธยมคนละเวลาคาบ) ──
+function renderDay(){
+  const now=new Date(), tm=toMins(now.getHours(),now.getMinutes());
+  const isToday=viewDow===jsDay(now.getDay());
+  document.getElementById('daybar').innerHTML=[1,2,3,4,5].map(d=>
+    `<button class="day-btn" type="button" aria-pressed="${d===viewDow}" onclick="setDay(${d})">${DAY_TH[d]}${d===jsDay(now.getDay())?' (วันนี้)':''}</button>`).join('');
+  document.getElementById('day-note').textContent=isToday?'ไฮไลต์ = คาบที่กำลังเรียนอยู่':`กำลังดูตารางวัน${DAY_TH[viewDow]}`;
+
+  const groups=[
+    {label:'ประถมศึกษา (ป.1–6)',bands:['p13','p46'],pb:PB_PRI,periods:[2,3,4,5,6,7],lunchAfter:4,color:'var(--color-band-p46)'},
+    {label:'มัธยมศึกษา (ม.1–3)',bands:['sec'],pb:PB_SEC,periods:[1,2,3,4,5,6,7,8],lunchAfter:4,color:'var(--color-band-sec)'}
+  ];
+  document.getElementById('day-area').innerHTML=groups.map(g=>{
+    const P2={};g.pb.forEach(([s,e,p])=>{if(p>0)P2[p]={s,e};});
+    const cur=isToday?curPeriod(g.pb,tm):null;
+    const curP=cur&&cur.p>0?cur.p:null;
+    const th=p=>`<th class="${curP===p?'now':''}">คาบ ${p}<span class="ph-time">${fmtMins(P2[p].s)}</span></th>`;
+    let head='<tr><th class="room-c">ห้อง</th>';
+    g.periods.forEach(p=>{head+=th(p);if(p===g.lunchAfter)head+='<th class="lunch">พัก</th>';});
+    head+='</tr>';
+    const rows=ROOMS.filter(r=>g.bands.includes(r.band)).map(r=>{
+      let tr=`<tr><td class="room-c">${esc(r.name)}</td>`;
+      g.periods.forEach(p=>{
+        const ent=r.map[viewDow]?.[p];
+        const cls='cell'+(curP===p?' now':isToday&&P2[p]&&tm>=P2[p].e?' past':'');
+        tr+=ent
+          ? `<td class="${cls}"><div class="c-subj" style="--cc:${areaColor(ent)}">${esc(ent.subj)}</div><div class="c-tch">${esc(ent.teacher)}</div></td>`
+          : `<td class="${cls}"><span class="c-dash">—</span></td>`;
+        if(p===g.lunchAfter)tr+='<td class="lunch"></td>';
+      });
+      return tr+'</tr>';
+    }).join('');
+    return `<div class="sub-hd" style="--bc:${g.color}"><span class="band-dot"></span>${g.label}</div>
+      <div class="tbl-wrap"><table class="grid"><thead>${head}</thead><tbody>${rows}</tbody></table></div>`;
+  }).join('');
+}
+function setDay(d){viewDow=d;renderDay();}
+
+function renderLegend(){
+  document.getElementById('legend').innerHTML='<span style="font-weight:600;color:var(--color-ink)">กลุ่มสาระ:</span>'+
+    Object.entries(AREA_COLOR).map(([a,c])=>`<span class="lg"><i style="--lc:${c}"></i>${esc(a)}</span>`).join('');
+}
+
+async function init(){
+  try{
+    const [p13,p46,sec]=await Promise.all([loadPrimary(BANDS[0]),loadPrimary(BANDS[1]),loadSecondary()]);
+    ROOMS=[...p13,...p46,...sec];
+    loadedAt=new Date();
+    viewDow=jsDay(loadedAt.getDay())||1;
+    renderLegend();renderNow();renderDay();
+    document.getElementById('foot').textContent=
+      `ข้อมูล ${ROOMS.length} ห้อง โหลดเมื่อ ${loadedAt.toLocaleTimeString('th-TH',{hour12:false})} น. — ดึงสดจากหน้าตารางสอนของแต่ละช่วงชั้น`;
+    setInterval(renderNow,15000);
+    setInterval(()=>renderShell(new Date()),1000);
+  }catch(err){
+    document.getElementById('rooms-area').innerHTML=
+      `<div class="state-msg"><div class="err">โหลดตารางสอนไม่สำเร็จ</div><div style="margin-top:8px">${esc(err.message)}</div>
+       <div style="margin-top:8px;font-size:var(--text-xs)">ตรวจว่าเปิดหน้านี้จากเว็บ (ไม่ใช่เปิดไฟล์ตรง) และ Google Sheet ของมัธยมยังแชร์แบบ “ทุกคนที่มีลิงก์ดูได้”</div></div>`;
+    document.getElementById('day-area').innerHTML='';
+    document.getElementById('state-chip').textContent='โหลดข้อมูลไม่ได้';
+  }
+}
+init();
+</script>
+</body>
+</html>
