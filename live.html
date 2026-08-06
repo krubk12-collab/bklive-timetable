@@ -604,8 +604,12 @@ document.addEventListener('visibilitychange',()=>{
   if(document.visibilityState==='visible'&&document.body.classList.contains('tv'))keepAwake(true);
 });
 
-async function init(){
+let retryTimer=null, tickers=[];
+async function init(retry=0){
   try{
+    clearTimeout(retryTimer);
+    tickers.forEach(clearInterval);tickers=[];   // กัน setInterval ซ้อนกันเมื่อ retry สำเร็จ
+    if(retry)document.getElementById('rooms-area').innerHTML='<div class="state-msg"><div class="spinner"></div>กำลังดึงตารางสอนใหม่…</div>';
     const [p13,p46,sec]=await Promise.all([loadPrimary(BANDS[0]),loadPrimary(BANDS[1]),loadSecondary()]);
     ROOMS=[...p13,...p46,...sec];
     loadedAt=new Date();
@@ -619,14 +623,20 @@ async function init(){
     if(new URLSearchParams(location.search).get('tv')==='1')toggleTv(true);
     document.getElementById('foot').textContent=
       `ข้อมูล ${ROOMS.length} ห้อง โหลดเมื่อ ${loadedAt.toLocaleTimeString('th-TH',{hour12:false})} น. — ดึงสดจากหน้าตารางสอนของแต่ละช่วงชั้น`;
-    setInterval(renderNow,15000);
-    setInterval(()=>renderShell(new Date()),1000);
+    tickers.push(setInterval(renderNow,15000),setInterval(()=>renderShell(new Date()),1000));
   }catch(err){
+    // เน็ตโรงเรียนสะดุดครั้งเดียวไม่ควรทำให้จอที่เปิดค้างทั้งวันตาย → ลองใหม่เองทุก 20 วินาที
+    const wait=20;
     document.getElementById('rooms-area').innerHTML=
-      `<div class="state-msg"><div class="err">โหลดตารางสอนไม่สำเร็จ</div><div style="margin-top:8px">${esc(err.message)}</div>
-       <div style="margin-top:8px;font-size:var(--text-xs)">ตรวจว่าเปิดหน้านี้จากเว็บ (ไม่ใช่เปิดไฟล์ตรง) และ Google Sheet ของมัธยมยังแชร์แบบ “ทุกคนที่มีลิงก์ดูได้”</div></div>`;
+      `<div class="state-msg"><div class="err">โหลดตารางสอนไม่สำเร็จ (ครั้งที่ ${retry+1})</div>
+       <div style="margin-top:8px">${esc(err.message)}</div>
+       <div style="margin-top:8px"><span class="spinner" style="width:16px;height:16px;border-width:2px;display:inline-block;vertical-align:middle;margin:0 6px 0 0"></span>
+       กำลังลองใหม่อัตโนมัติใน ${wait} วินาที — <button class="link-btn" style="padding:4px 12px" onclick="init(${retry+1})">ลองใหม่เดี๋ยวนี้</button></div>
+       <div style="margin-top:8px;font-size:var(--text-xs)">ถ้ายังไม่ได้ ตรวจว่าเครื่องต่อเน็ตอยู่ และ Google Sheet ของมัธยมยังแชร์แบบ “ทุกคนที่มีลิงก์ดูได้”</div></div>`;
     document.getElementById('day-area').innerHTML='';
-    document.getElementById('state-chip').textContent='โหลดข้อมูลไม่ได้';
+    document.getElementById('state-chip').textContent='กำลังลองโหลดใหม่…';
+    clearTimeout(retryTimer);
+    retryTimer=setTimeout(()=>init(retry+1),wait*1000);
   }
 }
 init();
