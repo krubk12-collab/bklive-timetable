@@ -221,6 +221,57 @@ table.grid{border-collapse:collapse;width:max-content;min-width:100%;font-size:v
 .skel{background:var(--color-surface-2);border-radius:var(--radius);height:96px;animation:skel 1.4s var(--ease-in-out) infinite}
 @keyframes skel{0%,100%{opacity:1}50%{opacity:.55}}
 
+/* ── ปุ่มโหมดจอทีวี ── */
+.tv-btn{
+  font-family:var(--font-body);font-size:var(--text-sm);font-weight:700;cursor:pointer;
+  padding:7px 14px;border-radius:var(--radius-pill);white-space:nowrap;
+  background:oklch(100% 0 0 / .12);border:1px solid oklch(100% 0 0 / .35);color:var(--color-on-shell);
+  transition:background var(--dur-fast) var(--ease-out);
+}
+.tv-btn:hover{background:oklch(100% 0 0 / .26)}
+.tv-btn:focus-visible{outline:3px solid var(--color-on-shell);outline-offset:2px}
+.tv-btn:active{transform:translateY(1px)}
+
+/* ── โหมดจอทีวี: พื้นเข้ม ตัวใหญ่ เหลือเฉพาะ “ตอนนี้” ── */
+body.tv{
+  --color-paper:oklch(21% 0.03 262);
+  --color-surface:oklch(26% 0.035 262);
+  --color-surface-2:oklch(31% 0.035 262);
+  --color-ink:oklch(98% 0.005 250);
+  --color-ink-soft:oklch(82% 0.02 250);
+  --color-ink-mute:oklch(64% 0.02 250);
+  --color-line:oklch(36% 0.03 262);
+  --color-line-strong:oklch(46% 0.03 262);
+  --color-shell:oklch(16% 0.03 262);
+  --color-shell-2:oklch(24% 0.05 258);
+  /* สีกลุ่มสาระ/ช่วงชั้นสว่างขึ้นให้อ่านออกบนพื้นเข้ม */
+  --color-a-thai:oklch(74% 0.17 25);   --color-a-math:oklch(74% 0.14 255);
+  --color-a-sci:oklch(76% 0.15 150);   --color-a-soc:oklch(82% 0.14 75);
+  --color-a-eng:oklch(74% 0.16 300);   --color-a-pe:oklch(78% 0.12 210);
+  --color-a-art:oklch(76% 0.17 350);   --color-a-work:oklch(78% 0.15 55);
+  --color-a-act:oklch(74% 0.02 260);
+  --color-band-p13:oklch(78% 0.15 70); --color-band-p46:oklch(76% 0.15 160);
+  --color-band-sec:oklch(75% 0.14 250);
+  /* ตัวใหญ่ขึ้นสำหรับอ่านไกล */
+  --text-xs:.95rem; --text-sm:1.05rem; --text-base:1.2rem;
+  --text-lg:1.5rem; --text-xl:1.8rem; --text-2xl:2.8rem;
+  --shadow:none; --shadow-sm:none;
+}
+body.tv .panel{border-radius:0;border:none;margin:0;padding:var(--space-sm) var(--space-md)}
+body.tv main{padding:0;max-width:none}
+/* ทุกช่วงชั้นมี 6 ห้องเท่ากัน → บังคับ 6 คอลัมน์ ให้ครบ 18 ห้องใน 1 จอ ไม่ต้องเลื่อน */
+body.tv .rooms{grid-template-columns:repeat(6,minmax(0,1fr));gap:var(--space-sm)}
+@media (max-width:1200px){body.tv .rooms{grid-template-columns:repeat(3,minmax(0,1fr))}}
+body.tv .room{padding:var(--space-sm) var(--space-sm) var(--space-sm) var(--space-md)}
+body.tv .band{margin-bottom:var(--space-sm)}
+body.tv .room::before{width:9px}
+body.tv .band-hd{font-size:var(--text-lg);margin-bottom:var(--space-sm)}
+body.tv .tracks{gap:var(--space-md)}
+body.tv .track-bar{height:11px}
+body.tv .shell-sub,body.tv #day-panel,body.tv #links,body.tv #foot,body.tv #legend{display:none}
+body.tv .panel-hd{margin-bottom:var(--space-sm)}
+body.tv .tv-btn{background:oklch(100% 0 0 / .2)}
+
 @media (max-width:640px){
   main{padding:var(--space-md) var(--space-sm) var(--space-xl)}
   .panel{padding:var(--space-md);border-radius:var(--radius)}
@@ -246,6 +297,7 @@ table.grid{border-collapse:collapse;width:max-content;min-width:100%;font-size:v
         <div class="clock-date" id="today-date">—</div>
       </div>
       <span class="state-chip" id="state-chip">กำลังโหลด…</span>
+      <button class="tv-btn" id="tv-btn" type="button" onclick="toggleTv()" title="ขยายตัวอักษรเต็มจอ สำหรับเปิดค้างบนทีวี/จอโปรเจกเตอร์">📺 โหมดจอทีวี</button>
     </div>
   </div>
 </header>
@@ -263,7 +315,7 @@ table.grid{border-collapse:collapse;width:max-content;min-width:100%;font-size:v
     <div class="legend" id="legend"></div>
   </section>
 
-  <section class="panel" aria-labelledby="day-title">
+  <section class="panel" id="day-panel" aria-labelledby="day-title">
     <div class="panel-hd">
       <h2 class="panel-title" id="day-title">ตารางสอนทั้งวัน</h2>
       <div class="panel-note" id="day-note">—</div>
@@ -272,11 +324,7 @@ table.grid{border-collapse:collapse;width:max-content;min-width:100%;font-size:v
     <div id="day-area"><div class="skel"></div></div>
   </section>
 
-  <div class="links">
-    <a class="link-btn" href="timetable_p13.html">ตารางสอน ป.1–3 (รายละเอียด)</a>
-    <a class="link-btn" href="timetable_p46.html">ตารางสอน ป.4–6 (รายละเอียด)</a>
-    <a class="link-btn" href="index.html">ตารางสอน ม.1–3 (รายละเอียด)</a>
-  </div>
+  <div class="links" id="links"></div>
   <p class="foot" id="foot">—</p>
 </main>
 
@@ -293,9 +341,12 @@ const SHEET={
 // ประถม: คาบ 2-7 คาบละ 60 นาที · มัธยม: คาบ 1-8 คาบละ 50 นาที (พักเที่ยงคนละเวลา)
 const PB_PRI=[[500,510,0],[510,570,2],[570,630,3],[630,690,4],[690,750,-1],[750,810,5],[810,870,6],[870,930,7]];
 const PB_SEC=[[510,560,1],[560,610,2],[610,660,3],[660,710,4],[710,770,-1],[770,820,5],[820,870,6],[870,930,7],[930,990,8]];
+// absolute URL — หน้านี้เสิร์ฟจาก 2 ที่ (GitHub Pages และ bangkho.ac.th/time/) ต้องหาไฟล์ต้นทางเจอทั้งคู่
+// GitHub Pages ส่ง Access-Control-Allow-Origin: * จึง fetch ข้ามโดเมนได้
+const SRC='https://krubk12-collab.github.io/bklive-timetable/';
 const BANDS=[
-  {key:'p13',label:'ประถมศึกษาตอนต้น (ป.1–3)',src:'timetable_p13.html',pb:PB_PRI,color:'var(--color-band-p13)',soft:'var(--color-band-p13-soft)'},
-  {key:'p46',label:'ประถมศึกษาตอนปลาย (ป.4–6)',src:'timetable_p46.html',pb:PB_PRI,color:'var(--color-band-p46)',soft:'var(--color-band-p46-soft)'},
+  {key:'p13',label:'ประถมศึกษาตอนต้น (ป.1–3)',src:SRC+'timetable_p13.html',pb:PB_PRI,color:'var(--color-band-p13)',soft:'var(--color-band-p13-soft)'},
+  {key:'p46',label:'ประถมศึกษาตอนปลาย (ป.4–6)',src:SRC+'timetable_p46.html',pb:PB_PRI,color:'var(--color-band-p46)',soft:'var(--color-band-p46-soft)'},
   {key:'sec',label:'มัธยมศึกษา (ม.1–3)',pb:PB_SEC,color:'var(--color-band-sec)',soft:'var(--color-band-sec-soft)'}
 ];
 const AREA_OF={
@@ -526,13 +577,46 @@ function renderLegend(){
     Object.entries(AREA_COLOR).map(([a,c])=>`<span class="lg"><i style="--lc:${c}"></i>${esc(a)}</span>`).join('');
 }
 
+// ── โหมดจอทีวี: ตัวใหญ่ พื้นเข้ม เต็มจอ กันจอดับ · เปิดค้างได้ทั้งวัน ──
+// เปิดอัตโนมัติด้วย ?tv=1 (เต็มจอต้องกดปุ่มเอง — เบราว์เซอร์ไม่ยอมให้สั่งเต็มจอโดยไม่มีการกด)
+let wakeLock=null;
+async function keepAwake(on){
+  try{
+    if(on&&'wakeLock' in navigator){wakeLock=await navigator.wakeLock.request('screen');}
+    else if(wakeLock){await wakeLock.release();wakeLock=null;}
+  }catch(e){/* บางเบราว์เซอร์ไม่รองรับ — ไม่เป็นไร */}
+}
+function toggleTv(force){
+  const on=force!==undefined?force:!document.body.classList.contains('tv');
+  document.body.classList.toggle('tv',on);
+  document.getElementById('tv-btn').textContent=on?'✕ ออกจากโหมดจอทีวี':'📺 โหมดจอทีวี';
+  keepAwake(on);
+  if(on&&document.documentElement.requestFullscreen)document.documentElement.requestFullscreen().catch(()=>{});
+  else if(!on&&document.fullscreenElement)document.exitFullscreen().catch(()=>{});
+  renderNow();
+}
+// ออกจากเต็มจอ (ESC) → ออกจากโหมดจอทีวีด้วย
+document.addEventListener('fullscreenchange',()=>{
+  if(!document.fullscreenElement&&document.body.classList.contains('tv'))toggleTv(false);
+});
+// ขอ wake lock คืนหลังสลับแท็บกลับมา
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible'&&document.body.classList.contains('tv'))keepAwake(true);
+});
+
 async function init(){
   try{
     const [p13,p46,sec]=await Promise.all([loadPrimary(BANDS[0]),loadPrimary(BANDS[1]),loadSecondary()]);
     ROOMS=[...p13,...p46,...sec];
     loadedAt=new Date();
     viewDow=jsDay(loadedAt.getDay())||1;
+    document.getElementById('links').innerHTML=[
+      ['timetable_p13.html','ตารางสอน ป.1–3 (รายละเอียด)'],
+      ['timetable_p46.html','ตารางสอน ป.4–6 (รายละเอียด)'],
+      ['index.html','ตารางสอน ม.1–3 (รายละเอียด)']
+    ].map(([f,t])=>`<a class="link-btn" href="${SRC}${f}">${t}</a>`).join('');
     renderLegend();renderNow();renderDay();
+    if(new URLSearchParams(location.search).get('tv')==='1')toggleTv(true);
     document.getElementById('foot').textContent=
       `ข้อมูล ${ROOMS.length} ห้อง โหลดเมื่อ ${loadedAt.toLocaleTimeString('th-TH',{hour12:false})} น. — ดึงสดจากหน้าตารางสอนของแต่ละช่วงชั้น`;
     setInterval(renderNow,15000);
