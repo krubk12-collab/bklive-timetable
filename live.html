@@ -32,6 +32,8 @@
   --color-band-p13:oklch(66% 0.15 65);
   --color-band-p46:oklch(58% 0.13 160);
   --color-band-sec:oklch(55% 0.15 250);
+  --color-band-kg:oklch(62% 0.18 350);
+  --color-band-kg-soft:oklch(96% 0.03 350);
   --color-band-p13-soft:oklch(96% 0.04 70);
   --color-band-p46-soft:oklch(95% 0.04 165);
   --color-band-sec-soft:oklch(95% 0.04 250);
@@ -250,7 +252,7 @@ body.tv{
   --color-a-art:oklch(76% 0.17 350);   --color-a-work:oklch(78% 0.15 55);
   --color-a-act:oklch(74% 0.02 260);
   --color-band-p13:oklch(78% 0.15 70); --color-band-p46:oklch(76% 0.15 160);
-  --color-band-sec:oklch(75% 0.14 250);
+  --color-band-sec:oklch(75% 0.14 250); --color-band-kg:oklch(80% 0.15 350);
   /* ตัวใหญ่ขึ้นสำหรับอ่านไกล */
   --text-xs:.95rem; --text-sm:1.05rem; --text-base:1.2rem;
   --text-lg:1.5rem; --text-xl:1.8rem; --text-2xl:2.8rem;
@@ -258,7 +260,7 @@ body.tv{
 }
 body.tv .panel{border-radius:0;border:none;margin:0;padding:var(--space-sm) var(--space-md)}
 body.tv main{padding:0;max-width:none}
-/* ทุกช่วงชั้นมี 6 ห้องเท่ากัน → บังคับ 6 คอลัมน์ ให้ครบ 18 ห้องใน 1 จอ ไม่ต้องเลื่อน */
+/* ป.1-ม.3 ช่วงชั้นละ 6 ห้อง (อนุบาล 4 ห้อง) → บังคับ 6 คอลัมน์ ให้ครบ 22 ห้องใน 1 จอ ไม่ต้องเลื่อน */
 body.tv .rooms{grid-template-columns:repeat(6,minmax(0,1fr));gap:var(--space-sm)}
 @media (max-width:1200px){body.tv .rooms{grid-template-columns:repeat(3,minmax(0,1fr))}}
 body.tv .room{padding:var(--space-sm) var(--space-sm) var(--space-sm) var(--space-md)}
@@ -309,7 +311,7 @@ body.embed .band{margin-bottom:var(--space-md)}
   <div class="shell-in">
     <div>
       <h1 class="shell-title">ภาพรวมการสอนสด — โรงเรียนชุมชนวัดบางโค</h1>
-      <div class="shell-sub">ทุกช่วงชั้น ป.1 – ม.3 · 18 ห้องเรียน · อัปเดตอัตโนมัติทุก 15 วินาที</div>
+      <div class="shell-sub">ทุกช่วงชั้น อ.2 – ม.3 · 22 ห้องเรียน · อัปเดตอัตโนมัติทุก 15 วินาที</div>
     </div>
     <div class="shell-clock">
       <div>
@@ -359,11 +361,14 @@ const SHEET={
 };
 // ประถม: คาบ 2-7 คาบละ 60 นาที · มัธยม: คาบ 1-8 คาบละ 50 นาที (พักเที่ยงคนละเวลา)
 const PB_PRI=[[500,510,0],[510,570,2],[570,630,3],[630,690,4],[690,750,-1],[750,810,5],[810,870,6],[870,930,7]];
+// อนุบาล: 6 ช่วงกิจกรรม (ใช้เลขช่อง 2-7 เหมือนประถม แต่ช่วงที่ 3 สั้น 30 นาที และเลิก 15:00)
+const PB_KG=[[500,510,0],[510,570,2],[570,630,3],[630,660,4],[660,750,-1],[750,810,5],[810,870,6],[870,900,7]];
 const PB_SEC=[[510,560,1],[560,610,2],[610,660,3],[660,710,4],[710,770,-1],[770,820,5],[820,870,6],[870,930,7],[930,990,8]];
 // absolute URL — หน้านี้เสิร์ฟจาก 2 ที่ (GitHub Pages และ bangkho.ac.th/time/) ต้องหาไฟล์ต้นทางเจอทั้งคู่
 // GitHub Pages ส่ง Access-Control-Allow-Origin: * จึง fetch ข้ามโดเมนได้
 const SRC='https://krubk12-collab.github.io/bklive-timetable/';
 const BANDS=[
+  {key:'kg',label:'อนุบาล (อ.2–3)',src:SRC+'timetable_kg.html',pb:PB_KG,color:'var(--color-band-kg)',soft:'var(--color-band-kg-soft)',plabel:p=>'ช่วงที่ '+(p-1)},
   {key:'p13',label:'ประถมศึกษาตอนต้น (ป.1–3)',src:SRC+'timetable_p13.html',pb:PB_PRI,color:'var(--color-band-p13)',soft:'var(--color-band-p13-soft)'},
   {key:'p46',label:'ประถมศึกษาตอนปลาย (ป.4–6)',src:SRC+'timetable_p46.html',pb:PB_PRI,color:'var(--color-band-p46)',soft:'var(--color-band-p46-soft)'},
   {key:'sec',label:'มัธยมศึกษา (ม.1–3)',pb:PB_SEC,color:'var(--color-band-sec)',soft:'var(--color-band-sec-soft)'}
@@ -377,13 +382,18 @@ const AREA_OF={
   'ทัศนศิลป์':'ศิลปะ','ดนตรี':'ศิลปะ','นาฏศิลป์':'ศิลปะ',
   'การงานอาชีพ':'การงานอาชีพ','งานใบตอง 1':'การงานอาชีพ','งานใบตอง 2':'การงานอาชีพ','งานใบตอง 3':'การงานอาชีพ',
   'แนะแนว':'กิจกรรมพัฒนาผู้เรียน','ชุมนุม':'กิจกรรมพัฒนาผู้เรียน','ลูกเสือ':'กิจกรรมพัฒนาผู้เรียน',
-  'ซ่อมเสริม':'กิจกรรมพัฒนาผู้เรียน','สวดมนต์':'กิจกรรมพัฒนาผู้เรียน','จริยธรรม':'กิจกรรมพัฒนาผู้เรียน'
+  'ซ่อมเสริม':'กิจกรรมพัฒนาผู้เรียน','สวดมนต์':'กิจกรรมพัฒนาผู้เรียน','จริยธรรม':'กิจกรรมพัฒนาผู้เรียน',
+  // 6 กิจกรรมหลักของอนุบาล (คอมพิวเตอร์/ภาษาอังกฤษ ใช้กลุ่มสาระเดิม)
+  'เคลื่อนไหวและจังหวะ':'กิจกรรมอนุบาล','เสริมประสบการณ์':'กิจกรรมอนุบาล','ศิลปะสร้างสรรค์':'กิจกรรมอนุบาล',
+  'เสรี/มุมประสบการณ์':'กิจกรรมอนุบาล','กลางแจ้ง':'กิจกรรมอนุบาล','เกมการศึกษา':'กิจกรรมอนุบาล',
+  'นอนพักผ่อน':'กิจกรรมอนุบาล','ทบทวน/กลับบ้าน':'กิจกรรมอนุบาล','คอมพิวเตอร์':'วิทยาศาสตร์และเทคโนโลยี'
 };
 const AREA_COLOR={
   'ภาษาไทย':'var(--color-a-thai)','คณิตศาสตร์':'var(--color-a-math)',
   'วิทยาศาสตร์และเทคโนโลยี':'var(--color-a-sci)','สังคมศึกษาฯ':'var(--color-a-soc)',
   'ภาษาต่างประเทศ':'var(--color-a-eng)','สุขศึกษาและพลศึกษา':'var(--color-a-pe)',
-  'ศิลปะ':'var(--color-a-art)','การงานอาชีพ':'var(--color-a-work)','กิจกรรมพัฒนาผู้เรียน':'var(--color-a-act)'
+  'ศิลปะ':'var(--color-a-art)','การงานอาชีพ':'var(--color-a-work)','กิจกรรมพัฒนาผู้เรียน':'var(--color-a-act)',
+  'กิจกรรมอนุบาล':'var(--color-band-kg)'
 };
 const DAY_TH={1:'จันทร์',2:'อังคาร',3:'พุธ',4:'พฤหัสบดี',5:'ศุกร์'};
 const MONTH_TH=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
@@ -396,7 +406,8 @@ const toMins=(h,m)=>h*60+m;
 const fmtMins=t=>`${String(Math.floor(t/60)).padStart(2,'0')}:${String(t%60).padStart(2,'0')}`;
 const jsDay=d=>(d>=1&&d<=5)?d:0;
 // ประถมเดากลุ่มสาระจากชื่อวิชา · มัธยมใช้ learning_area ที่มากับชีตโดยตรง (ชื่อวิชามีเลขห้องต่อท้าย เดาไม่ได้)
-const areaColor=ent=>AREA_COLOR[(typeof ent==='string'?AREA_OF[ent]:ent.area||AREA_OF[ent.subj])||'']||'var(--color-a-act)';
+const areaOf=s=>AREA_OF[String(s).split(' + ')[0]]||'';
+const areaColor=ent=>AREA_COLOR[(typeof ent==='string'?areaOf(ent):ent.area||areaOf(ent.subj))||'']||'var(--color-a-act)';
 
 // ── ดึง literal (const X = [...] / {...}) ออกจากไฟล์ HTML เดิม โดยนับวงเล็บให้สมดุล ──
 function extractLiteral(src,name){
@@ -506,18 +517,19 @@ function renderNow(){
   const dow=jsDay(now.getDay());
   const tm=toMins(now.getHours(),now.getMinutes());
 
+  const pname=b=>(b.plabel||(p=>'คาบ '+p));
   document.getElementById('tracks').innerHTML=BANDS.map(b=>{
     const st=bandStatus(b,now);
     let head='',bar='',left='';
     if(st.kind==='teaching'){
       const total=st.cur.e-st.cur.s, done=tm-st.cur.s;
-      head=`<span class="track-period">คาบ ${st.cur.p}</span>`;
+      head=`<span class="track-period">${pname(b)(st.cur.p)}</span>`;
       bar=`<div class="track-bar"><div class="track-fill" style="width:${Math.min(100,Math.round(done/total*100))}%"></div></div>`;
       left=`<div class="track-left">${fmtMins(st.cur.s)}–${fmtMins(st.cur.e)} น. · เหลืออีก <b>${st.cur.e-tm} นาที</b></div>`;
     }else{
       const msg={holiday:'วันหยุด',before:'ยังไม่เริ่มเรียน',after:'เลิกเรียนแล้ว',lunch:'พักกลางวัน',homeroom:'โฮมรูม',gap:'ช่วงพัก'}[st.kind];
       head=`<span class="track-period" style="color:var(--color-ink-mute)">${msg}</span>`;
-      left=`<div class="track-left">${st.next?`คาบถัดไป คาบ ${st.next.p} เวลา ${fmtMins(st.next.s)} น.`:'—'}</div>`;
+      left=`<div class="track-left">${st.next?`ถัดไป ${pname(b)(st.next.p)} เวลา ${fmtMins(st.next.s)} น.`:'—'}</div>`;
     }
     return `<div class="track" style="--tc:${b.color}"><div class="track-top"><span class="track-name">${esc(b.label)}</span>${head}</div>${bar}${left}</div>`;
   }).join('');
@@ -562,6 +574,7 @@ function renderDay(){
   document.getElementById('day-note').textContent=isToday?'ไฮไลต์ = คาบที่กำลังเรียนอยู่':`กำลังดูตารางวัน${DAY_TH[viewDow]}`;
 
   const groups=[
+    {label:'อนุบาล (อ.2–3)',bands:['kg'],pb:PB_KG,periods:[2,3,4,5,6,7],lunchAfter:4,color:'var(--color-band-kg)',plabel:p=>'ช่วงที่ '+(p-1)},
     {label:'ประถมศึกษา (ป.1–6)',bands:['p13','p46'],pb:PB_PRI,periods:[2,3,4,5,6,7],lunchAfter:4,color:'var(--color-band-p46)'},
     {label:'มัธยมศึกษา (ม.1–3)',bands:['sec'],pb:PB_SEC,periods:[1,2,3,4,5,6,7,8],lunchAfter:4,color:'var(--color-band-sec)'}
   ];
@@ -569,7 +582,8 @@ function renderDay(){
     const P2={};g.pb.forEach(([s,e,p])=>{if(p>0)P2[p]={s,e};});
     const cur=isToday?curPeriod(g.pb,tm):null;
     const curP=cur&&cur.p>0?cur.p:null;
-    const th=p=>`<th class="${curP===p?'now':''}">คาบ ${p}<span class="ph-time">${fmtMins(P2[p].s)}</span></th>`;
+    const pname=g.plabel||(p=>'คาบ '+p);
+    const th=p=>`<th class="${curP===p?'now':''}">${pname(p)}<span class="ph-time">${fmtMins(P2[p].s)}</span></th>`;
     let head='<tr><th class="room-c">ห้อง</th>';
     g.periods.forEach(p=>{head+=th(p);if(p===g.lunchAfter)head+='<th class="lunch">พัก</th>';});
     head+='</tr>';
@@ -631,8 +645,8 @@ async function init(retry=0){
     clearTimeout(retryTimer);
     tickers.forEach(clearInterval);tickers=[];   // กัน setInterval ซ้อนกันเมื่อ retry สำเร็จ
     if(retry)document.getElementById('rooms-area').innerHTML='<div class="state-msg"><div class="spinner"></div>กำลังดึงตารางสอนใหม่…</div>';
-    const [p13,p46,sec]=await Promise.all([loadPrimary(BANDS[0]),loadPrimary(BANDS[1]),loadSecondary()]);
-    ROOMS=[...p13,...p46,...sec];
+    const parts=await Promise.all([...BANDS.filter(b=>b.src).map(loadPrimary),loadSecondary()]);
+    ROOMS=parts.flat();
     loadedAt=new Date();
     viewDow=jsDay(loadedAt.getDay())||1;
     renderLegend();renderNow();renderDay();
