@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0f172a">
-<title>ภาพรวมการสอนปัจจุบัน - รร.ชุมชนวัดบางโค(แม่นางวิทย์อุปการี)</title>
+<title>ภาพรวมการสอน 2/2569 (ร่าง) - รร.ชุมชนวัดบางโค(แม่นางวิทย์อุปการี)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@600;700&display=swap" rel="stylesheet">
@@ -322,8 +322,8 @@ body.embed .band{margin-bottom:var(--space-md)}
 <header class="shell">
   <div class="shell-in">
     <div>
-      <h1 class="shell-title">ภาพรวมการสอนปัจจุบัน - รร.ชุมชนวัดบางโค(แม่นางวิทย์อุปการี)</h1>
-      <div class="shell-sub">ทุกช่วงชั้น อ.2 – ม.3 · 22 ห้องเรียน · อัปเดตอัตโนมัติทุก 15 วินาที · <a href="https://bangkho.ac.th/time/2569-1/" style="color:inherit;text-decoration:underline">📁 ดูตารางภาคเรียน 1/2569 (ย้อนหลัง)</a> · <a href="https://bangkho.ac.th/time/2569-2-draft/" style="color:inherit;text-decoration:underline">📝 ร่างตาราง ม.1–3 ภาค 2/2569</a> · <a href="https://bangkho.ac.th/time/2569-2-draft/p46/" style="color:inherit;text-decoration:underline">📝 ร่าง ป.4–6</a> · <a href="https://bangkho.ac.th/time/2569-2-draft/p13/" style="color:inherit;text-decoration:underline">📝 ร่าง ป.1–3</a></div>
+      <h1 class="shell-title">ภาพรวมการสอน ภาคเรียนที่ 2/2569 (ร่าง) - รร.ชุมชนวัดบางโค(แม่นางวิทย์อุปการี)</h1>
+      <div class="shell-sub">ทุกช่วงชั้น อ.2 – ม.3 · 22 ห้องเรียน · อัปเดตอัตโนมัติทุก 15 วินาที · <a href="https://bangkho.ac.th/time/2569-1/" style="color:inherit;text-decoration:underline">📁 ตาราง 1/2569</a> · <a href="https://bangkho.ac.th/time/2569-2-draft/" style="color:inherit;text-decoration:underline">📝 แก้ร่าง ม.1–3</a> · <a href="https://bangkho.ac.th/time/2569-2-draft/p46/" style="color:inherit;text-decoration:underline">📝 ร่าง ป.4–6</a> · <a href="https://bangkho.ac.th/time/2569-2-draft/p13/" style="color:inherit;text-decoration:underline">📝 ร่าง ป.1–3</a></div>
     </div>
     <div class="shell-clock">
       <div>
@@ -380,12 +380,18 @@ const PB_SEC=[[510,560,1],[560,610,2],[610,660,3],[660,710,4],[710,770,-1],[770,
 // absolute URL — หน้านี้เสิร์ฟจาก 2 ที่ (GitHub Pages และ bangkho.ac.th/time/) ต้องหาไฟล์ต้นทางเจอทั้งคู่
 // GitHub Pages ส่ง Access-Control-Allow-Origin: * จึง fetch ข้ามโดเมนได้
 const SRC='https://krubk12-collab.github.io/bklive-timetable/';
+// ภาค 2/2569: ป.1–ม.3 ใช้ร่างจาก /time/2569-2-draft/ (draft.json ที่ครูแก้ผ่านเว็บ) · อนุบาลยังใช้ตารางเดิม
+// อนุมัติแล้ว → ลบ draft: ออก จะกลับไปอ่าน timetable_*.html / Google Sheets ตามเดิม
+// bangkho.ac.th อ่าน .json ตรง · โดเมนอื่น (GitHub Pages) ผ่าน draft.php ที่ใส่ CORS ให้
+const DRAFT=location.hostname==='bangkho.ac.th'?b=>'/time/2569-2-draft/'+(b==='sec'?'':b+'/')+'draft.json'
+  :b=>'https://bangkho.ac.th/time/2569-2-draft/draft.php?b='+b;
 const BANDS=[
   {key:'kg',label:'อนุบาล (อ.2–3)',src:SRC+'timetable_kg.html',pb:PB_KG,color:'var(--color-band-kg)',soft:'var(--color-band-kg-soft)',plabel:p=>'ช่วงที่ '+(p-1)},
-  {key:'p13',label:'ประถมศึกษาตอนต้น (ป.1–3)',src:SRC+'timetable_p13.html',pb:PB_PRI,color:'var(--color-band-p13)',soft:'var(--color-band-p13-soft)'},
-  {key:'p46',label:'ประถมศึกษาตอนปลาย (ป.4–6)',src:SRC+'timetable_p46.html',pb:PB_PRI,color:'var(--color-band-p46)',soft:'var(--color-band-p46-soft)'},
-  {key:'sec',label:'มัธยมศึกษา (ม.1–3)',pb:PB_SEC,color:'var(--color-band-sec)',soft:'var(--color-band-sec-soft)'}
+  {key:'p13',label:'ประถมศึกษาตอนต้น (ป.1–3)',src:SRC+'timetable_p13.html',draft:DRAFT('p13'),pb:PB_PRI,color:'var(--color-band-p13)',soft:'var(--color-band-p13-soft)'},
+  {key:'p46',label:'ประถมศึกษาตอนปลาย (ป.4–6)',src:SRC+'timetable_p46.html',draft:DRAFT('p46'),pb:PB_PRI,color:'var(--color-band-p46)',soft:'var(--color-band-p46-soft)'},
+  {key:'sec',label:'มัธยมศึกษา (ม.1–3)',draft:DRAFT('sec'),pb:PB_SEC,color:'var(--color-band-sec)',soft:'var(--color-band-sec-soft)'}
 ];
+const IS_DRAFT=BANDS.some(b=>b.draft);
 const AREA_OF={
   'ภาษาไทย':'ภาษาไทย','คณิตศาสตร์':'คณิตศาสตร์',
   'วิทยาศาสตร์':'วิทยาศาสตร์และเทคโนโลยี','วิทยาการคำนวณ':'วิทยาศาสตร์และเทคโนโลยี',
@@ -399,7 +405,13 @@ const AREA_OF={
   // 6 กิจกรรมหลักของอนุบาล (คอมพิวเตอร์/ภาษาอังกฤษ ใช้กลุ่มสาระเดิม)
   'เคลื่อนไหวและจังหวะ':'กิจกรรมอนุบาล','เสริมประสบการณ์':'กิจกรรมอนุบาล','ศิลปะสร้างสรรค์':'กิจกรรมอนุบาล',
   'เสรี/มุมประสบการณ์':'กิจกรรมอนุบาล','กลางแจ้ง':'กิจกรรมอนุบาล','เกมการศึกษา':'กิจกรรมอนุบาล',
-  'นอนพักผ่อน':'กิจกรรมอนุบาล','ทบทวน/กลับบ้าน':'กิจกรรมอนุบาล','คอมพิวเตอร์':'วิทยาศาสตร์และเทคโนโลยี'
+  'นอนพักผ่อน':'กิจกรรมอนุบาล','ทบทวน/กลับบ้าน':'กิจกรรมอนุบาล','คอมพิวเตอร์':'วิทยาศาสตร์และเทคโนโลยี',
+  // ชื่อวิชาในร่าง ม.1–3 (ร่างไม่มี learning_area)
+  'สังคมศึกษาฯ':'สังคมศึกษาฯ','สุขศึกษา-พลศึกษา':'สุขศึกษาและพลศึกษา','สุขศึกษาและพลศึกษา':'สุขศึกษาและพลศึกษา',
+  'ดนตรี-นาฏศิลป์':'ศิลปะ','ศาสตร์นาฏยศิลป์':'ศิลปะ','ลูกเสือ-เนตรนารี':'กิจกรรมพัฒนาผู้เรียน',
+  'การอ่านอย่างฉลาดรู้':'ภาษาไทย','ฉลาดรู้คณิตศาสตร์':'คณิตศาสตร์','ฉลาดรู้วิทยาศาสตร์':'วิทยาศาสตร์และเทคโนโลยี',
+  'พลังงานทดแทน':'วิทยาศาสตร์และเทคโนโลยี','คอมพิวเตอร์กราฟิกเบื้องต้น':'วิทยาศาสตร์และเทคโนโลยี','คอมพิวเตอร์ธุรกิจ':'วิทยาศาสตร์และเทคโนโลยี',
+  'ร้อยมาลัย 2':'การงานอาชีพ','ช่างซ่อมเครื่องใช้ไฟฟ้าในบ้าน':'การงานอาชีพ','ภาษาอังกฤษเพื่อการสื่อสาร':'ภาษาต่างประเทศ'
 };
 const AREA_COLOR={
   'ภาษาไทย':'var(--color-a-thai)','คณิตศาสตร์':'var(--color-a-math)',
@@ -502,6 +514,17 @@ async function loadPrimary(band){
     (room.map[dow]??={})[period]={subj,teacher:String(tkeys).split('+').map(k=>T[k]||k).join(' / ')};
   });
   return rooms;
+}
+// ร่างตาราง: {rooms:{id:ชื่อห้อง}, grid:{id:{"วัน-คาบ":{s,t:[ชื่อครู]}}}}
+async function loadDraft(band){
+  const res=await fetch(band.draft,{cache:'no-cache'});
+  if(!res.ok)throw new Error(`${band.draft} HTTP ${res.status}`);
+  const D=await res.json();
+  return Object.entries(D.rooms).map(([id,name])=>{
+    const map={};
+    Object.entries(D.grid[id]||{}).forEach(([k,v])=>{const [d,p]=k.split('-').map(Number);(map[d]??={})[p]={subj:v.s,teacher:v.t.join(' / ')};});
+    return {id,name,band:band.key,map};
+  });
 }
 function parseCSV(text){
   const lines=text.trim().split(/\r?\n/);if(lines.length<2)return[];
@@ -713,7 +736,7 @@ async function init(retry=0){
     clearTimeout(retryTimer);
     tickers.forEach(clearInterval);tickers=[];   // กัน setInterval ซ้อนกันเมื่อ retry สำเร็จ
     if(retry)document.getElementById('rooms-area').innerHTML='<div class="state-msg"><div class="spinner"></div>กำลังดึงตารางสอนใหม่…</div>';
-    const parts=await Promise.all([...BANDS.filter(b=>b.src).map(loadPrimary),loadSecondary()]);
+    const parts=await Promise.all(BANDS.map(b=>b.draft?loadDraft(b):b.src?loadPrimary(b):loadSecondary()));
     ROOMS=parts.flat();
     loadedAt=new Date();
     viewDow=jsDay(loadedAt.getDay())||1;
@@ -721,7 +744,8 @@ async function init(retry=0){
     if(IS_EMBED)document.body.classList.add('embed');
     if(IS_EMBED||new URLSearchParams(location.search).get('tv')==='1')toggleTv(true);
     document.getElementById('foot').textContent=
-      `ข้อมูล ${ROOMS.length} ห้อง โหลดเมื่อ ${loadedAt.toLocaleTimeString('th-TH',{hour12:false})} น. — ดึงสดจากหน้าตารางสอนของแต่ละช่วงชั้น`;
+      `ข้อมูล ${ROOMS.length} ห้อง โหลดเมื่อ ${loadedAt.toLocaleTimeString('th-TH',{hour12:false})} น. — `+
+      (IS_DRAFT?'ป.1–ม.3 ดึงสดจากร่างตารางภาค 2/2569 (ยังไม่อนุมัติ) · อนุบาลใช้ตารางเดิม':'ดึงสดจากหน้าตารางสอนของแต่ละช่วงชั้น');
     tickers.push(setInterval(renderNow,15000));
     // โหมดฝังซ่อนแถบหัวอยู่แล้ว → ไม่ต้องเดินนาฬิกาทุกวินาที
     // (นอกจากเปลืองแรงเครื่องแล้ว การ re-render ถี่ ๆ ยังไปกวน smooth scroll ของหน้าที่ฝังเราไว้)
