@@ -222,6 +222,16 @@ table.grid{border-collapse:collapse;width:max-content;min-width:100%;font-size:v
 .skel{background:var(--color-surface-2);border-radius:var(--radius);height:96px;animation:skel 1.4s var(--ease-in-out) infinite}
 @keyframes skel{0%,100%{opacity:1}50%{opacity:.55}}
 
+/* ── แถบวันพิเศษ: วันพระ / วันหยุด / ปิดภาคเรียน ── */
+.day-banner{
+  margin-bottom:var(--space-md);padding:var(--space-sm) var(--space-md);border-radius:var(--radius-sm);
+  background:oklch(93% 0.07 80);color:oklch(30% 0.07 60);border:1px solid oklch(80% 0.1 75);
+  font-size:var(--text-sm);line-height:1.6;
+}
+.day-banner b{font-size:var(--text-lg)}
+body.tv .day-banner,body.embed .day-banner{background:oklch(82% 0.13 80 / .18);color:var(--color-ink);border-color:oklch(82% 0.13 80 / .5)}
+.room.is-temple{--ac:oklch(72% 0.15 75)}
+
 /* ── ปุ่มโหมดจอทีวี ── */
 .tv-btn{
   font-family:var(--font-body);font-size:var(--text-sm);font-weight:700;cursor:pointer;
@@ -330,6 +340,7 @@ body.embed .band{margin-bottom:var(--space-md)}
       <h2 class="panel-title" id="now-title">กำลังเรียนตอนนี้</h2>
       <div class="panel-note" id="now-summary">—</div>
     </div>
+    <div class="day-banner" id="day-banner" hidden></div>
     <div class="tracks" id="tracks"></div>
     <div id="rooms-area">
       <div class="state-msg"><div class="spinner"></div>กำลังดึงตารางสอนทั้งโรงเรียน…</div>
@@ -397,6 +408,51 @@ const AREA_COLOR={
 };
 const DAY_TH={1:'จันทร์',2:'อังคาร',3:'พุธ',4:'พฤหัสบดี',5:'ศุกร์'};
 const MONTH_TH=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+
+// ── ปฏิทินโรงเรียน (แก้ตรงนี้เมื่อขึ้นภาคเรียนใหม่ / ครม.ประกาศวันหยุดเพิ่ม) ──
+// วันหยุด/วันพระ: kapook + thaipbs (ตรวจวันในสัปดาห์แล้ว 25ต.ค.69) · ใส่เฉพาะวันจันทร์–ศุกร์ก็พอ
+const TERMS=[['2026-11-02','2027-03-31','ภาคเรียนที่ 2/2569']];
+const HOLIDAYS={
+  '2026-12-07':'วันหยุดชดเชยวันพ่อแห่งชาติ','2026-12-10':'วันรัฐธรรมนูญ','2026-12-31':'วันสิ้นปี',
+  '2027-01-01':'วันขึ้นปีใหม่','2027-02-22':'วันหยุดชดเชยวันมาฆบูชา'
+};
+const WANPRA={
+  '2026-11-03':'แรม 8 ค่ำ เดือน 11','2026-11-09':'แรม 14 ค่ำ เดือน 11','2026-11-17':'ขึ้น 8 ค่ำ เดือน 12',
+  '2026-11-24':'ขึ้น 15 ค่ำ เดือน 12 · วันลอยกระทง','2026-12-02':'แรม 8 ค่ำ เดือน 12','2026-12-09':'แรม 15 ค่ำ เดือน 12',
+  '2026-12-17':'ขึ้น 8 ค่ำ เดือนอ้าย','2026-12-24':'ขึ้น 15 ค่ำ เดือนอ้าย','2027-01-01':'แรม 8 ค่ำ เดือนอ้าย',
+  '2027-01-07':'แรม 14 ค่ำ เดือนอ้าย','2027-01-15':'ขึ้น 8 ค่ำ เดือนยี่','2027-01-22':'ขึ้น 15 ค่ำ เดือนยี่',
+  '2027-01-30':'แรม 8 ค่ำ เดือนยี่','2027-02-06':'แรม 15 ค่ำ เดือนยี่','2027-02-14':'ขึ้น 8 ค่ำ เดือน 3',
+  '2027-02-21':'ขึ้น 15 ค่ำ เดือน 3 · วันมาฆบูชา','2027-03-01':'แรม 8 ค่ำ เดือน 3','2027-03-07':'แรม 14 ค่ำ เดือน 3',
+  '2027-03-15':'ขึ้น 8 ค่ำ เดือน 4','2027-03-22':'ขึ้น 15 ค่ำ เดือน 4','2027-03-30':'แรม 8 ค่ำ เดือน 4'
+};
+// วันพระที่มีเรียน: คาบแรกส่งตัวแทนไปวัด ช่วงชั้นละ 1 ห้อง วนตามลำดับห้อง
+const TEMPLE_BANDS=['p13','p46','sec'];
+const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+function dayInfo(now){
+  const k=ymd(now), term=TERMS.find(([a,b])=>k>=a&&k<=b);
+  const closed=!jsDay(now.getDay())?'วันหยุด':HOLIDAYS[k]||(!term?'ปิดภาคเรียน':'');
+  return {k,term,closed,pra:WANPRA[k]||''};
+}
+const schoolDow=now=>dayInfo(now).closed?0:jsDay(now.getDay());
+// ห้องตัวแทนไปวัดวันนี้ {bandKey:room} — ลำดับ = วันพระที่มีเรียนครั้งที่เท่าไรของภาคเรียน
+function templeRooms(now){
+  const di=dayInfo(now);
+  if(!di.pra||di.closed)return {};
+  const n=Object.keys(WANPRA).filter(k=>k>=di.term[0]&&k<di.k&&!dayInfo(new Date(k+'T12:00')).closed).length;
+  return Object.fromEntries(TEMPLE_BANDS.map(b=>{const rs=ROOMS.filter(r=>r.band===b);return [b,rs[n%rs.length]];}).filter(([,r])=>r));
+}
+function nextOpen(now){
+  const k=ymd(now), t=TERMS.find(([a])=>a>k);
+  return t?`เปิด${t[2]} ${new Date(t[0]+'T12:00').toLocaleDateString('th-TH',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}`:'';
+}
+function renderBanner(now){
+  const di=dayInfo(now), el=document.getElementById('day-banner'), reps=templeRooms(now);
+  let h='';
+  if(di.pra)h=`🙏 <b>วันพระ สวัสดี สาธุ</b> · ${esc(di.pra)}`+
+    (Object.keys(reps).length?`<br>คาบแรก ตัวแทนไปทำบุญที่วัด: ${Object.values(reps).map(r=>'<b>'+esc(r.name)+'</b>').join(' · ')}`:'');
+  if(di.closed&&di.closed!=='วันหยุด')h+=(h?'<br>':'')+`📅 <b>${esc(di.closed)}</b>`+(di.closed==='ปิดภาคเรียน'&&nextOpen(now)?` — ${esc(nextOpen(now))}`:'');
+  el.hidden=!h; el.innerHTML=h;
+}
 
 // rooms[] = {id, name, band, map:{dow:{period:{subj,teacher}}}}
 let ROOMS=[], loadedAt=null, viewDow=null;
@@ -481,7 +537,7 @@ function nextPeriod(pb,tm){
   return null;
 }
 function bandStatus(band,now){
-  const dow=jsDay(now.getDay()), tm=toMins(now.getHours(),now.getMinutes());
+  const dow=schoolDow(now), tm=toMins(now.getHours(),now.getMinutes());
   const first=band.pb[0][0], last=band.pb[band.pb.length-1][1];
   if(!dow) return {kind:'holiday',dow:0};
   if(tm<first) return {kind:'before',dow,next:nextPeriod(band.pb,tm)};
@@ -495,7 +551,7 @@ function bandStatus(band,now){
 
 // ── แถบสถานะรวมบนหัว ──
 function renderShell(now){
-  const dow=jsDay(now.getDay());
+  const dow=schoolDow(now);
   document.getElementById('clock').textContent=now.toLocaleTimeString('th-TH',{hour12:false});
   document.getElementById('today-date').textContent=
     `วัน${['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'][now.getDay()]}ที่ ${now.getDate()} ${MONTH_TH[now.getMonth()]} ${now.getFullYear()+543}`;
@@ -503,7 +559,7 @@ function renderShell(now){
   const anyTeaching=BANDS.some(b=>bandStatus(b,now).kind==='teaching');
   const anyLunch=BANDS.some(b=>['lunch','homeroom','gap'].includes(bandStatus(b,now).kind));
   chip.className='state-chip'+(anyTeaching?' is-live':anyLunch?' is-break':'');
-  chip.innerHTML=!dow?'📅 วันหยุด — ไม่มีการเรียนการสอน'
+  chip.innerHTML=!dow?`📅 ${esc(dayInfo(now).closed)} — ไม่มีการเรียนการสอน`
     :anyTeaching?'<span class="pulse"></span> กำลังสอนอยู่'
     :anyLunch?'🍱 ช่วงพัก'
     :toMins(now.getHours(),now.getMinutes())<PB_PRI[0][0]?'🌅 ก่อนเข้าเรียน':'🏠 เลิกเรียนแล้ว';
@@ -514,7 +570,8 @@ function renderNow(){
   const now=new Date();
   renderShell(now);
   if(!ROOMS.length)return;
-  const dow=jsDay(now.getDay());
+  renderBanner(now);
+  const dow=schoolDow(now), reps=templeRooms(now);
   const tm=toMins(now.getHours(),now.getMinutes());
 
   const pname=b=>(b.plabel||(p=>'คาบ '+p));
@@ -536,7 +593,7 @@ function renderNow(){
 
   const area=document.getElementById('rooms-area');
   if(!dow){
-    area.innerHTML=`<div class="state-msg">วันนี้เป็นวันหยุด — เลือกดูตารางของแต่ละวันได้ที่หัวข้อ “ตารางสอนทั้งวัน” ด้านล่าง</div>`;
+    area.innerHTML=`<div class="state-msg">วันนี้${esc(dayInfo(now).closed)} — เลือกดูตารางของแต่ละวันได้ที่หัวข้อ “ตารางสอนทั้งวัน” ด้านล่าง</div>`;
     document.getElementById('now-summary').textContent='ไม่มีคาบเรียนวันนี้';
     return;
   }
@@ -547,6 +604,9 @@ function renderNow(){
     const cards=rooms.map(r=>{
       const ent=st.kind==='teaching'?r.map[dow]?.[st.cur.p]:null;
       const nxt=st.next?r.map[dow]?.[st.next.p]:null;
+      // วันพระ คาบแรกของช่วงชั้น: ห้องตัวแทนไปวัด
+      if(st.kind==='teaching'&&reps[b.key]===r&&st.cur.p===b.pb.find(x=>x[2]>0)[2])
+        return `<div class="room is-temple"><div class="room-name">${esc(r.name)}</div><div class="room-subj">🙏 ไปทำบุญที่วัด</div><div class="room-teacher">ตัวแทนช่วงชั้น · วันพระ สาธุ</div></div>`;
       const nextLine=nxt?`<div class="room-next">ถัดไป <b>${esc(nxt.subj)}</b> · ${fmtMins(st.next.s)} น.</div>`:'';
       if(!ent){
         const why=st.kind==='teaching'?'— ว่าง —':{lunch:'พักกลางวัน',homeroom:'โฮมรูม',before:'ยังไม่เริ่มเรียน',after:'เลิกเรียนแล้ว',gap:'ช่วงพัก'}[st.kind]||'—';
@@ -568,7 +628,7 @@ function renderNow(){
 // ── ตารางทั้งวัน (2 ตาราง เพราะประถม/มัธยมคนละเวลาคาบ) ──
 function renderDay(){
   const now=new Date(), tm=toMins(now.getHours(),now.getMinutes());
-  const isToday=viewDow===jsDay(now.getDay());
+  const isToday=viewDow===schoolDow(now);
   document.getElementById('daybar').innerHTML=[1,2,3,4,5].map(d=>
     `<button class="day-btn" type="button" aria-pressed="${d===viewDow}" onclick="setDay(${d})">${DAY_TH[d]}${d===jsDay(now.getDay())?' (วันนี้)':''}</button>`).join('');
   document.getElementById('day-note').textContent=isToday?'ไฮไลต์ = คาบที่กำลังเรียนอยู่':`กำลังดูตารางวัน${DAY_TH[viewDow]}`;
