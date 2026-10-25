@@ -230,6 +230,8 @@ table.grid{border-collapse:collapse;width:max-content;min-width:100%;font-size:v
 }
 .day-banner b{font-size:var(--text-lg)}
 body.tv .day-banner,body.embed .day-banner{background:oklch(82% 0.13 80 / .18);color:var(--color-ink);border-color:oklch(82% 0.13 80 / .5)}
+.countdown{margin-top:6px;font-size:var(--text-lg);font-weight:600}
+.countdown b{font-size:var(--text-2xl);font-variant-numeric:tabular-nums;margin:0 2px}
 .room.is-temple{--ac:oklch(72% 0.15 75)}
 
 /* ── ปุ่มโหมดจอทีวี ── */
@@ -430,7 +432,7 @@ const TEMPLE_BANDS=['p13','p46','sec'];
 const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 function dayInfo(now){
   const k=ymd(now), term=TERMS.find(([a,b])=>k>=a&&k<=b);
-  const closed=!jsDay(now.getDay())?'วันหยุด':HOLIDAYS[k]||(!term?'ปิดภาคเรียน':'');
+  const closed=!term?'ปิดภาคเรียน':HOLIDAYS[k]||(!jsDay(now.getDay())?'วันหยุด':'');
   return {k,term,closed,pra:WANPRA[k]||''};
 }
 const schoolDow=now=>dayInfo(now).closed?0:jsDay(now.getDay());
@@ -451,6 +453,12 @@ function renderBanner(now){
   if(di.pra)h=`🙏 <b>วันพระ สวัสดี สาธุ</b> · ${esc(di.pra)}`+
     (Object.keys(reps).length?`<br>คาบแรก ตัวแทนไปทำบุญที่วัด: ${Object.values(reps).map(r=>'<b>'+esc(r.name)+'</b>').join(' · ')}`:'');
   if(di.closed&&di.closed!=='วันหยุด')h+=(h?'<br>':'')+`📅 <b>${esc(di.closed)}</b>`+(di.closed==='ปิดภาคเรียน'&&nextOpen(now)?` — ${esc(nextOpen(now))}`:'');
+  // นับถอยหลังเปิดเทอม (ถึง 08:30 น. วันเปิด) — แสดงตอนปิดภาคเรียน
+  const nt=TERMS.find(([a])=>a>di.k);
+  if(!di.term&&nt){
+    const ms=new Date(nt[0]+'T08:30')-now, d=Math.floor(ms/864e5), hr=Math.floor(ms/36e5)%24, mi=Math.floor(ms/6e4)%60;
+    h+=`<div class="countdown">⏳ นับถอยหลังเปิดเทอม <b>${d}</b> วัน <b>${hr}</b> ชั่วโมง <b>${mi}</b> นาที</div>`;
+  }
   el.hidden=!h; el.innerHTML=h;
 }
 
